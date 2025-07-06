@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using GestorTareas.API.Data;
+using GestorTareas.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,32 @@ builder.Services.AddSwaggerGen();
 // Configure Entity Framework with SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "GestorTareas",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "GestorTareasUsers",
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "TuClaveSecretaSuperSegura123!"))
+        };
+    });
+
+// Register AuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Register QRService
+builder.Services.AddScoped<IQRService, QRService>();
+
+// Add HttpContextAccessor for QR generation
+builder.Services.AddHttpContextAccessor();
 
 // Configure CORS for React frontend
 builder.Services.AddCors(options =>
@@ -39,6 +69,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

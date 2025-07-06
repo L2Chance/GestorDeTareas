@@ -22,5 +22,9 @@ namespace GestorTareas.API.Models
         
         [Range(1, 3)]
         public int Prioridad { get; set; } = 1; // 1: Baja, 2: Media, 3: Alta
+        
+        // Relación con Usuario
+        public int UsuarioId { get; set; }
+        public virtual Usuario Usuario { get; set; } = null!;
     }
 } 
