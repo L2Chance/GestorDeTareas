@@ -112,10 +112,10 @@ Temporary Items
 # Entity Framework
 Migrations/
 
-# SQLite database files (opcional - puedes incluirlos si quieres)
-# *.db
-# *.db-shm
-# *.db-wal
+# SQLite database files (incluidos para deploy en Render)
+*.db
+*.db-shm
+*.db-wal
 
 # Logs
 logs/

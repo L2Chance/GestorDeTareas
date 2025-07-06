@@ -163,3 +163,4 @@
 /home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/bin/Debug/net9.0/runtimes/win-arm64/native/e_sqlite3.dll
 /home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/bin/Debug/net9.0/runtimes/win-x64/native/e_sqlite3.dll
 /home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/bin/Debug/net9.0/runtimes/win-x86/native/e_sqlite3.dll
+/home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/obj/Debug/net9.0/GestorTareas.API.sourcelink.json
