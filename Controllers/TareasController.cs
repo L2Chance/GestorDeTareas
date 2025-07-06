@@ -16,6 +16,21 @@ namespace GestorTareas.API.Controllers
             _context = context;
         }
 
+        [HttpGet("health")]
+        public async Task<ActionResult> HealthCheck()
+        {
+            try
+            {
+                // Verificar que la base de datos esté disponible
+                await _context.Database.CanConnectAsync();
+                return Ok(new { status = "healthy", message = "Database connection successful" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "unhealthy", message = ex.Message });
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tarea>>> GetTareas()
         {
