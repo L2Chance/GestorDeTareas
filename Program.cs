@@ -14,8 +14,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Entity Framework with SQLite
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (builder.Environment.IsProduction())
+{
+    // En producción, usar una ruta absoluta
+    var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "GestorTareas.db");
+    connectionString = $"Data Source={dbPath}";
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(connectionString));
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -58,8 +66,29 @@ var app = builder.Build();
 // Apply migrations automatically
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // Asegurar que la base de datos existe
+        context.Database.EnsureCreated();
+        
+        // Aplicar migraciones
+        context.Database.Migrate();
+        
+        Console.WriteLine("Database initialized and migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error initializing database: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        
+        // En desarrollo, lanzar la excepción para debugging
+        if (!app.Environment.IsProduction())
+        {
+            throw;
+        }
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -73,6 +102,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Health check endpoint
+app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
 
 var summaries = new[]
 {
