@@ -225,7 +225,7 @@ namespace GestorTareas.API.Services
         
         private string GenerarJWT(Usuario usuario)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "TuClaveSecretaSuperSegura123!"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "ElGestorDeTareasEsLaMejorAplicacionDelMundo2024!"));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             
             var claims = new[]

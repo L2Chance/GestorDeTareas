@@ -38,7 +38,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "GestorTareas",
             ValidAudience = builder.Configuration["Jwt:Audience"] ?? "GestorTareasUsers",
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "TuClaveSecretaSuperSegura123!"))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "ElGestorDeTareasEsLaMejorAplicacionDelMundo2024!"))
         };
         
         // Agregar eventos para logging
