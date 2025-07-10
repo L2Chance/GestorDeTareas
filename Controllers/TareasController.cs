@@ -3,11 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using GestorTareas.API.Models;
 using GestorTareas.API.Data;
 using GestorTareas.API.Services;
+using GestorTareas.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestorTareas.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TareasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +25,7 @@ namespace GestorTareas.API.Controllers
         }
 
         [HttpGet("health")]
+        [AllowAnonymous]
         public async Task<ActionResult> HealthCheck()
         {
             try
@@ -37,54 +41,166 @@ namespace GestorTareas.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tarea>>> GetTareas()
+        public async Task<ActionResult<IEnumerable<TareaResponseDTO>>> GetTareas()
         {
-            return await _context.Tareas.ToListAsync();
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tareas = await _context.Tareas
+                .Where(t => t.UsuarioId == userId)
+                .Include(t => t.Usuario)
+                .Select(t => new TareaResponseDTO
+                {
+                    Id = t.Id,
+                    Titulo = t.Titulo,
+                    Descripcion = t.Descripcion,
+                    Completada = t.Completada,
+                    FechaCreacion = t.FechaCreacion,
+                    FechaCompletada = t.FechaCompletada,
+                    Prioridad = t.Prioridad,
+                    UsuarioId = t.UsuarioId,
+                    UsuarioNombre = $"{t.Usuario.Nombre} {t.Usuario.Apellido}"
+                })
+                .ToListAsync();
+
+            return Ok(tareas);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tarea>> GetTarea(int id)
+        public async Task<ActionResult<TareaResponseDTO>> GetTarea(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = await _context.Tareas
+                .Include(t => t.Usuario)
+                .FirstOrDefaultAsync(t => t.Id == id && t.UsuarioId == userId);
+
             if (tarea == null)
                 return NotFound();
 
-            return Ok(tarea);
+            var tareaResponse = new TareaResponseDTO
+            {
+                Id = tarea.Id,
+                Titulo = tarea.Titulo,
+                Descripcion = tarea.Descripcion,
+                Completada = tarea.Completada,
+                FechaCreacion = tarea.FechaCreacion,
+                FechaCompletada = tarea.FechaCompletada,
+                Prioridad = tarea.Prioridad,
+                UsuarioId = tarea.UsuarioId,
+                UsuarioNombre = $"{tarea.Usuario.Nombre} {tarea.Usuario.Apellido}"
+            };
+
+            return Ok(tareaResponse);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Tarea>> CrearTarea([FromBody] Tarea tarea)
+        public async Task<ActionResult<TareaResponseDTO>> CrearTarea([FromBody] CrearTareaDTO crearTareaDTO)
         {
-            tarea.FechaCreacion = DateTime.Now;
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = new Tarea
+            {
+                Titulo = crearTareaDTO.Titulo,
+                Descripcion = crearTareaDTO.Descripcion,
+                Completada = false,
+                FechaCreacion = DateTime.Now,
+                Prioridad = crearTareaDTO.Prioridad,
+                UsuarioId = userId
+            };
+
             _context.Tareas.Add(tarea);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTarea), new { id = tarea.Id }, tarea);
+            // Obtener el usuario para la respuesta
+            var usuario = await _context.Usuarios.FindAsync(userId);
+
+            var tareaResponse = new TareaResponseDTO
+            {
+                Id = tarea.Id,
+                Titulo = tarea.Titulo,
+                Descripcion = tarea.Descripcion,
+                Completada = tarea.Completada,
+                FechaCreacion = tarea.FechaCreacion,
+                FechaCompletada = tarea.FechaCompletada,
+                Prioridad = tarea.Prioridad,
+                UsuarioId = tarea.UsuarioId,
+                UsuarioNombre = usuario != null ? $"{usuario.Nombre} {usuario.Apellido}" : ""
+            };
+
+            return CreatedAtAction(nameof(GetTarea), new { id = tarea.Id }, tareaResponse);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> ActualizarTarea(int id, [FromBody] Tarea tareaActualizada)
+        public async Task<ActionResult<TareaResponseDTO>> ActualizarTarea(int id, [FromBody] ActualizarTareaDTO actualizarTareaDTO)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id && t.UsuarioId == userId);
             if (tarea == null)
                 return NotFound();
 
-            tarea.Titulo = tareaActualizada.Titulo;
-            tarea.Descripcion = tareaActualizada.Descripcion;
-            tarea.Completada = tareaActualizada.Completada;
-            tarea.Prioridad = tareaActualizada.Prioridad;
+            tarea.Titulo = actualizarTareaDTO.Titulo;
+            tarea.Descripcion = actualizarTareaDTO.Descripcion;
+            tarea.Completada = actualizarTareaDTO.Completada;
+            tarea.Prioridad = actualizarTareaDTO.Prioridad;
 
             if (tarea.Completada && !tarea.FechaCompletada.HasValue)
                 tarea.FechaCompletada = DateTime.Now;
+            else if (!tarea.Completada)
+                tarea.FechaCompletada = null;
 
             await _context.SaveChangesAsync();
-            return NoContent();
+
+            // Obtener el usuario para la respuesta
+            var usuario = await _context.Usuarios.FindAsync(userId);
+
+            var tareaResponse = new TareaResponseDTO
+            {
+                Id = tarea.Id,
+                Titulo = tarea.Titulo,
+                Descripcion = tarea.Descripcion,
+                Completada = tarea.Completada,
+                FechaCreacion = tarea.FechaCreacion,
+                FechaCompletada = tarea.FechaCompletada,
+                Prioridad = tarea.Prioridad,
+                UsuarioId = tarea.UsuarioId,
+                UsuarioNombre = usuario != null ? $"{usuario.Nombre} {usuario.Apellido}" : ""
+            };
+
+            return Ok(tareaResponse);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> EliminarTarea(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id && t.UsuarioId == userId);
             if (tarea == null)
                 return NotFound();
 
@@ -96,7 +212,14 @@ namespace GestorTareas.API.Controllers
         [HttpGet("{id}/qr")]
         public async Task<IActionResult> GenerarQRParaTarea(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id && t.UsuarioId == userId);
             if (tarea == null)
                 return NotFound("Tarea no encontrada");
 
@@ -114,7 +237,14 @@ namespace GestorTareas.API.Controllers
         [HttpGet("{id}/qr-info")]
         public async Task<IActionResult> ObtenerInfoQR(int id)
         {
-            var tarea = await _context.Tareas.FindAsync(id);
+            // Obtener el ID del usuario autenticado
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized(new { message = "Usuario no autenticado" });
+            }
+
+            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id && t.UsuarioId == userId);
             if (tarea == null)
                 return NotFound("Tarea no encontrada");
 

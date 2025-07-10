@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestorTareas.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b48951db7000b7005861dd4fbe3ec22ce4141d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8cd24e02f83a8ced5c6891c86baf3dbc2e4bfa7")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestorTareas.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestorTareas.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
