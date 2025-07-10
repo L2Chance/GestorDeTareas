@@ -7,6 +7,8 @@ using GestorTareas.API.Models;
 using GestorTareas.API.DTOs;
 using GestorTareas.API.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Net;
 
 namespace GestorTareas.API.Services
 {
@@ -21,6 +23,7 @@ namespace GestorTareas.API.Services
         Task<UsuarioResponseDTO> EditarPerfilAsync(int userId, EditarPerfilDTO editarDTO);
         Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId);
         Task<bool> LogoutAsync(int userId);
+        Task<bool> ResetPasswordAsync(string token, string newPassword);
     }
     
     public class AuthService : IAuthService
@@ -116,22 +119,18 @@ namespace GestorTareas.API.Services
         public async Task<bool> RecuperarPasswordAsync(string email)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
-            
             if (usuario == null)
             {
                 // Por seguridad, no revelamos si el email existe o no
                 return true;
             }
-            
             // Generar token de recuperación
             var tokenRecuperacion = GenerarTokenSeguro();
             usuario.TokenRecuperacionPassword = tokenRecuperacion;
             usuario.TokenRecuperacionPasswordExpiracion = DateTime.UtcNow.AddHours(24);
-            
             await _context.SaveChangesAsync();
-            
-            // TODO: Enviar email con el token
-            // Por ahora, solo retornamos true
+            // Enviar email con el token
+            EnviarEmailRecuperacion(usuario.Email, tokenRecuperacion);
             return true;
         }
         
@@ -301,6 +300,56 @@ namespace GestorTareas.API.Services
             await _context.SaveChangesAsync();
             
             return true;
+        }
+
+        public async Task<bool> ResetPasswordAsync(string token, string newPassword)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
+                u.TokenRecuperacionPassword == token &&
+                u.TokenRecuperacionPasswordExpiracion > DateTime.UtcNow);
+            if (usuario == null)
+            {
+                return false;
+            }
+            var (passwordHash, passwordSalt) = CrearPasswordHash(newPassword);
+            usuario.PasswordHash = passwordHash;
+            usuario.PasswordSalt = passwordSalt;
+            usuario.TokenRecuperacionPassword = null;
+            usuario.TokenRecuperacionPasswordExpiracion = null;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private void EnviarEmailRecuperacion(string email, string token)
+        {
+            // Configuración SMTP (ajustar según tu proveedor)
+            var smtpHost = _configuration["Smtp:Host"] ?? "smtp.example.com";
+            var smtpPort = int.Parse(_configuration["Smtp:Port"] ?? "587");
+            var smtpUser = _configuration["Smtp:User"] ?? "usuario@example.com";
+            var smtpPass = _configuration["Smtp:Pass"] ?? "password";
+            var fromEmail = _configuration["Smtp:From"] ?? smtpUser;
+            var appUrl = _configuration["App:BaseUrl"] ?? "http://localhost:5036";
+            var resetUrl = $"{appUrl}/reset-password?token={Uri.EscapeDataString(token)}";
+            var subject = "Recuperación de contraseña";
+            var body = $"<p>Has solicitado restablecer tu contraseña.</p><p>Haz clic en el siguiente enlace para restablecerla:</p><p><a href='{resetUrl}'>{resetUrl}</a></p><p>Si no solicitaste este cambio, ignora este correo.</p>";
+            using var client = new SmtpClient(smtpHost, smtpPort)
+            {
+                Credentials = new NetworkCredential(smtpUser, smtpPass),
+                EnableSsl = true
+            };
+            var mail = new MailMessage(fromEmail, email, subject, body)
+            {
+                IsBodyHtml = true
+            };
+            try
+            {
+                client.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                // Loguear error, pero no lanzar excepción para no revelar detalles al usuario
+                Console.WriteLine($"Error enviando email de recuperación: {ex.Message}");
+            }
         }
     }
 } 

@@ -209,5 +209,26 @@ namespace GestorTareas.API.Controllers
                 return StatusCode(500, new { message = "Error al verificar token", error = ex.Message });
             }
         }
+        
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            await _authService.RecuperarPasswordAsync(dto.Email);
+            // Siempre responder igual por seguridad
+            return Ok(new { message = "Si el email existe, se ha enviado un enlace de recuperación." });
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            if (dto.NewPassword != dto.ConfirmPassword)
+                return BadRequest(new { message = "Las contraseñas no coinciden." });
+            var result = await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
+            if (!result)
+                return BadRequest(new { message = "Token inválido o expirado." });
+            return Ok(new { message = "Contraseña restablecida correctamente." });
+        }
     }
 } 
