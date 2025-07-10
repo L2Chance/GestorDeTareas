@@ -19,6 +19,9 @@ namespace GestorTareas.API.Services
         Task<bool> ConfirmarEmailAsync(string token);
         Task<bool> EnviarEmailConfirmacionAsync(string email);
         Task<IEnumerable<UsuarioResponseDTO>> ObtenerTodosLosUsuariosAsync();
+        Task<UsuarioResponseDTO> EditarPerfilAsync(int userId, EditarPerfilDTO editarDTO);
+        Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDTO cambiarPasswordDTO);
+        Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId);
     }
     
     public class AuthService : IAuthService
@@ -256,6 +259,81 @@ namespace GestorTareas.API.Services
                     EmailConfirmado = u.EmailConfirmado
                 })
                 .ToListAsync();
+        }
+
+        public async Task<UsuarioResponseDTO> EditarPerfilAsync(int userId, EditarPerfilDTO editarDTO)
+        {
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null)
+            {
+                throw new InvalidOperationException("Usuario no encontrado");
+            }
+            
+            // Verificar si el email ya existe en otro usuario
+            if (await _context.Usuarios.AnyAsync(u => u.Email == editarDTO.Email && u.Id != userId))
+            {
+                throw new InvalidOperationException("El email ya está en uso por otro usuario");
+            }
+            
+            // Actualizar datos del usuario
+            usuario.Email = editarDTO.Email;
+            usuario.Nombre = editarDTO.Nombre;
+            usuario.Apellido = editarDTO.Apellido;
+            
+            await _context.SaveChangesAsync();
+            
+            return new UsuarioResponseDTO
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                FechaCreacion = usuario.FechaCreacion,
+                EmailConfirmado = usuario.EmailConfirmado
+            };
+        }
+
+        public async Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDTO cambiarPasswordDTO)
+        {
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null)
+            {
+                throw new InvalidOperationException("Usuario no encontrado");
+            }
+            
+            // Verificar la contraseña actual
+            if (!VerificarPassword(cambiarPasswordDTO.PasswordActual, usuario.PasswordHash, usuario.PasswordSalt))
+            {
+                throw new InvalidOperationException("La contraseña actual es incorrecta");
+            }
+            
+            // Crear nuevo hash y salt para la nueva contraseña
+            var (passwordHash, passwordSalt) = CrearPasswordHash(cambiarPasswordDTO.NuevaPassword);
+            
+            usuario.PasswordHash = passwordHash;
+            usuario.PasswordSalt = passwordSalt;
+            
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId)
+        {
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null)
+            {
+                throw new InvalidOperationException("Usuario no encontrado");
+            }
+            
+            return new UsuarioResponseDTO
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                FechaCreacion = usuario.FechaCreacion,
+                EmailConfirmado = usuario.EmailConfirmado
+            };
         }
     }
 } 

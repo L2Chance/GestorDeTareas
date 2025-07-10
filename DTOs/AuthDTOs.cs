@@ -82,4 +82,36 @@ namespace GestorTareas.API.DTOs
         public UsuarioResponseDTO Usuario { get; set; } = null!;
         public DateTime Expiracion { get; set; }
     }
+    
+    public class EditarPerfilDTO
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
+        [MinLength(2)]
+        [MaxLength(50)]
+        public string Nombre { get; set; } = string.Empty;
+        
+        [Required]
+        [MinLength(2)]
+        [MaxLength(100)]
+        public string Apellido { get; set; } = string.Empty;
+    }
+    
+    public class CambiarPasswordDTO
+    {
+        [Required]
+        public string PasswordActual { get; set; } = string.Empty;
+        
+        [Required]
+        [MinLength(6)]
+        [MaxLength(100)]
+        public string NuevaPassword { get; set; } = string.Empty;
+        
+        [Required]
+        [Compare("NuevaPassword")]
+        public string ConfirmarNuevaPassword { get; set; } = string.Empty;
+    }
 } 

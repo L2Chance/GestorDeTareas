@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GestorTareas.API.Services;
 using GestorTareas.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestorTareas.API.Controllers
 {
@@ -102,6 +103,84 @@ namespace GestorTareas.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Error al obtener usuarios", error = ex.Message });
+            }
+        }
+        
+        [Authorize]
+        [HttpPut("usuario")]
+        public async Task<ActionResult<UsuarioResponseDTO>> EditarUsuario([FromBody] EditarPerfilDTO editarDTO)
+        {
+            try
+            {
+                // Obtener el ID del usuario desde el token JWT
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+                }
+                
+                var usuario = await _authService.EditarPerfilAsync(userId, editarDTO);
+                return Ok(usuario);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al editar usuario", error = ex.Message });
+            }
+        }
+        
+        [Authorize]
+        [HttpPut("cambiar-password")]
+        public async Task<ActionResult> CambiarPassword([FromBody] CambiarPasswordDTO cambiarPasswordDTO)
+        {
+            try
+            {
+                // Obtener el ID del usuario desde el token JWT
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+                }
+                
+                await _authService.CambiarPasswordAsync(userId, cambiarPasswordDTO);
+                return Ok(new { message = "Contraseña cambiada correctamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al cambiar contraseña", error = ex.Message });
+            }
+        }
+        
+        [Authorize]
+        [HttpGet("usuario-autenticado")]
+        public async Task<ActionResult<UsuarioResponseDTO>> ObtenerUsuarioAutenticado()
+        {
+            try
+            {
+                // Obtener el ID del usuario desde el token JWT
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+                }
+                
+                var usuario = await _authService.ObtenerUsuarioPorIdAsync(userId);
+                return Ok(usuario);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al obtener usuario autenticado", error = ex.Message });
             }
         }
     }
