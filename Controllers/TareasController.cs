@@ -24,6 +24,26 @@ namespace GestorTareas.API.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        // Método helper para convertir fecha sin hora a DateTime
+        private DateTime? ParseFechaSinHora(string? fechaString)
+        {
+            if (string.IsNullOrEmpty(fechaString))
+                return null;
+
+            // Intentar parsear como fecha ISO completa
+            if (DateTime.TryParse(fechaString, out DateTime fechaCompleta))
+            {
+                // Si es solo fecha (sin hora), establecer la hora a 23:59:59
+                if (fechaString.Length <= 10) // Formato YYYY-MM-DD
+                {
+                    return fechaCompleta.Date.AddDays(1).AddSeconds(-1); // 23:59:59 del día especificado
+                }
+                return fechaCompleta;
+            }
+
+            return null;
+        }
+
         [HttpGet("health")]
         [AllowAnonymous]
         public async Task<ActionResult> HealthCheck()
@@ -61,6 +81,7 @@ namespace GestorTareas.API.Controllers
                     Completada = t.Completada,
                     FechaCreacion = t.FechaCreacion,
                     FechaCompletada = t.FechaCompletada,
+                    FechaLimite = t.FechaLimite,
                     Prioridad = t.Prioridad,
                     UsuarioId = t.UsuarioId,
                     UsuarioNombre = $"{t.Usuario.Nombre} {t.Usuario.Apellido}"
@@ -95,6 +116,7 @@ namespace GestorTareas.API.Controllers
                 Completada = tarea.Completada,
                 FechaCreacion = tarea.FechaCreacion,
                 FechaCompletada = tarea.FechaCompletada,
+                FechaLimite = tarea.FechaLimite,
                 Prioridad = tarea.Prioridad,
                 UsuarioId = tarea.UsuarioId,
                 UsuarioNombre = $"{tarea.Usuario.Nombre} {tarea.Usuario.Apellido}"
@@ -113,6 +135,9 @@ namespace GestorTareas.API.Controllers
                 return Unauthorized(new { message = "Usuario no autenticado" });
             }
 
+            // Parsear la fecha límite
+            var fechaLimite = ParseFechaSinHora(crearTareaDTO.FechaLimite);
+
             var tarea = new Tarea
             {
                 Titulo = crearTareaDTO.Titulo,
@@ -120,6 +145,7 @@ namespace GestorTareas.API.Controllers
                 Completada = false,
                 FechaCreacion = DateTime.Now,
                 Prioridad = crearTareaDTO.Prioridad,
+                FechaLimite = fechaLimite,
                 UsuarioId = userId
             };
 
@@ -137,6 +163,7 @@ namespace GestorTareas.API.Controllers
                 Completada = tarea.Completada,
                 FechaCreacion = tarea.FechaCreacion,
                 FechaCompletada = tarea.FechaCompletada,
+                FechaLimite = tarea.FechaLimite,
                 Prioridad = tarea.Prioridad,
                 UsuarioId = tarea.UsuarioId,
                 UsuarioNombre = usuario != null ? $"{usuario.Nombre} {usuario.Apellido}" : ""
@@ -159,10 +186,14 @@ namespace GestorTareas.API.Controllers
             if (tarea == null)
                 return NotFound();
 
+            // Parsear la fecha límite
+            var fechaLimite = ParseFechaSinHora(actualizarTareaDTO.FechaLimite);
+
             tarea.Titulo = actualizarTareaDTO.Titulo;
             tarea.Descripcion = actualizarTareaDTO.Descripcion;
             tarea.Completada = actualizarTareaDTO.Completada;
             tarea.Prioridad = actualizarTareaDTO.Prioridad;
+            tarea.FechaLimite = fechaLimite;
 
             if (tarea.Completada && !tarea.FechaCompletada.HasValue)
                 tarea.FechaCompletada = DateTime.Now;
@@ -182,6 +213,7 @@ namespace GestorTareas.API.Controllers
                 Completada = tarea.Completada,
                 FechaCreacion = tarea.FechaCreacion,
                 FechaCompletada = tarea.FechaCompletada,
+                FechaLimite = tarea.FechaLimite,
                 Prioridad = tarea.Prioridad,
                 UsuarioId = tarea.UsuarioId,
                 UsuarioNombre = usuario != null ? $"{usuario.Nombre} {usuario.Apellido}" : ""

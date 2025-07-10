@@ -127,6 +127,8 @@ namespace GestorTareas.API.DTOs
         
         [Range(1, 3)]
         public int Prioridad { get; set; } = 1; // 1: Baja, 2: Media, 3: Alta
+        
+        public string? FechaLimite { get; set; } // Formato: "2025-07-10" o "2025-07-10T23:59:59"
     }
     
     public class ActualizarTareaDTO
@@ -142,6 +144,8 @@ namespace GestorTareas.API.DTOs
         
         [Range(1, 3)]
         public int Prioridad { get; set; } = 1;
+        
+        public string? FechaLimite { get; set; } // Formato: "2025-07-10" o "2025-07-10T23:59:59"
     }
     
     public class TareaResponseDTO
@@ -152,6 +156,7 @@ namespace GestorTareas.API.DTOs
         public bool Completada { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaCompletada { get; set; }
+        public DateTime? FechaLimite { get; set; }
         public int Prioridad { get; set; }
         public int UsuarioId { get; set; }
         public string UsuarioNombre { get; set; } = string.Empty;
