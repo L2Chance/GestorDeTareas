@@ -5,64 +5,58 @@
 }
 
 <div class="container mt-4">
-    <h2>Eliminar Tarea</h2>
-    
-    <div class="alert alert-danger">
-        <h4>¡Atención!</h4>
-        <p>Esta acción no se puede deshacer. Una vez eliminada la tarea, no podrá recuperarla.</p>
-    </div>
-    
-    <div class="card">
-        <div class="card-header">
-            <h5>Información de la Tarea</h5>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="alert alert-danger shadow-sm">
+                <h4 class="mb-2"><i class="fas fa-exclamation-triangle me-2"></i>¡Atención!</h4>
+                <p class="mb-0">Esta acción no se puede deshacer. Una vez eliminada la tarea, no podrá recuperarla.</p>
+            </div>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-trash-alt me-2"></i>Eliminar Tarea</h3>
+                </div>
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Título</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Titulo)</dd>
+                        <dt class="col-sm-4">Descripción</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
+                        <dt class="col-sm-4">Fecha de Vencimiento</dt>
+                        <dd class="col-sm-8">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</dd>
+                        <dt class="col-sm-4">Prioridad</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Prioridad switch {
+                                "Alta" => "bg-danger",
+                                "Media" => "bg-warning text-dark",
+                                "Baja" => "bg-success",
+                                _ => "bg-secondary"
+                            })">
+                                <i class="fas fa-flag me-1"></i>@Html.DisplayFor(model => model.Prioridad)
+                            </span>
+                        </dd>
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Completada)
+                            {
+                                <span class="badge bg-success"><i class="fas fa-check"></i> Completada</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> Pendiente</span>
+                            }
+                        </dd>
+                        <dt class="col-sm-4">Fecha de Creación</dt>
+                        <dd class="col-sm-8">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-light d-flex gap-2 justify-content-end">
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Confirmar Eliminación</button>
+                    </form>
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Cancelar</a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Título</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Titulo)</dd>
-                
-                <dt class="col-sm-3">Descripción</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-                
-                <dt class="col-sm-3">Fecha de Vencimiento</dt>
-                <dd class="col-sm-9">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</dd>
-                
-                <dt class="col-sm-3">Prioridad</dt>
-                <dd class="col-sm-9">
-                    <span class="badge @(Model.Prioridad switch {
-                        "Alta" => "bg-danger",
-                        "Media" => "bg-warning",
-                        "Baja" => "bg-success",
-                        _ => "bg-secondary"
-                    })">
-                        @Html.DisplayFor(model => model.Prioridad)
-                    </span>
-                </dd>
-                
-                <dt class="col-sm-3">Estado</dt>
-                <dd class="col-sm-9">
-                    @if (Model.Completada)
-                    {
-                        <span class="badge bg-success">Completada</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning">Pendiente</span>
-                    }
-                </dd>
-                
-                <dt class="col-sm-3">Fecha de Creación</dt>
-                <dd class="col-sm-9">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
-            </dl>
-        </div>
     </div>
-    
-    <form asp-action="Delete" method="post" class="mt-4">
-        <input type="hidden" asp-for="Id" />
-        
-        <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">Ver Detalles</a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
 </div> 

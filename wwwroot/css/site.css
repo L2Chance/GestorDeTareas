@@ -1,130 +1,243 @@
 /* Colores base */
 :root {
-    --verde-herbamate: #155c2e;
-    --verde-hover: #218c4c;
-    --verde-suave: #b6e2c6;
-    --blanco: #fff;
-    --gris-texto: #222;
+  --verde-herbamate: #155c2e;
+  --verde-hover: #218c4c;
+  --verde-suave: #b6e2c6;
+  --blanco: #fff;
+  --gris-texto: #222;
 }
 
 body {
-    background: var(--blanco);
-    color: var(--gris-texto);
-    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: var(--blanco);
+  color: var(--gris-texto);
+  font-family: "Segoe UI", "Roboto", Arial, sans-serif;
 }
 
-.btn, .btn-custom {
-    border-radius: 2rem !important;
-    font-weight: 500;
-    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+.btn,
+.btn-custom {
+  border-radius: 2rem !important;
+  font-weight: 500;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
 }
 
-.btn-primary, .btn-custom {
-    background: var(--verde-herbamate) !important;
-    color: var(--blanco) !important;
-    border: none;
+.btn-primary,
+.btn-custom {
+  background: var(--verde-herbamate) !important;
+  color: var(--blanco) !important;
+  border: none;
 }
 
-.btn-primary:hover, .btn-custom:hover {
-    background: var(--verde-hover) !important;
-    color: var(--blanco) !important;
-    box-shadow: 0 2px 8px rgba(21,92,46,0.15);
+.btn-primary:hover,
+.btn-custom:hover {
+  background: var(--verde-hover) !important;
+  color: var(--blanco) !important;
+  box-shadow: 0 2px 8px rgba(21, 92, 46, 0.15);
 }
 
 /* Formularios con validaciones visuales */
-input:invalid, select:invalid, textarea:invalid {
-    border-color: #dc3545;
-    animation: shake 0.2s 1;
+input:invalid,
+select:invalid,
+textarea:invalid {
+  border-color: #dc3545;
+  animation: shake 0.2s 1;
 }
-input:valid, select:valid, textarea:valid {
-    border-color: var(--verde-herbamate);
+input:valid,
+select:valid,
+textarea:valid {
+  border-color: var(--verde-herbamate);
 }
 
 @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    50% { transform: translateX(4px); }
-    75% { transform: translateX(-2px); }
-    100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 .form-control:focus {
-    border-color: var(--verde-herbamate);
-    box-shadow: 0 0 0 0.2rem rgba(21,92,46,0.15);
-    transition: box-shadow 0.2s;
+  border-color: var(--verde-herbamate);
+  box-shadow: 0 0 0 0.2rem rgba(21, 92, 46, 0.15);
+  transition: box-shadow 0.2s;
 }
 
 /* Animaciones en tarjetas y botones */
-.card, .btn, .form-control {
-    transition: box-shadow 0.2s, transform 0.2s;
+.card,
+.btn,
+.form-control {
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 .card:hover {
-    box-shadow: 0 4px 24px rgba(21,92,46,0.10);
-    transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 4px 24px rgba(21, 92, 46, 0.1);
+  transform: translateY(-2px) scale(1.01);
 }
 
 /* Navbar y menú */
 .navbar-sticky {
-    box-shadow: 0 2px 8px rgba(21,92,46,0.08);
+  box-shadow: 0 2px 8px rgba(21, 92, 46, 0.08);
 }
 
 /* Responsive ajustes */
 @media (max-width: 576px) {
-    .logo-img { height: 36px; }
-    .navbar-brand span { font-size: 1.1rem; }
-    .container, .container-fluid { padding-left: 8px; padding-right: 8px; }
+  .logo-img {
+    height: 36px;
+  }
+  .navbar-brand span {
+    font-size: 1.1rem;
+  }
+  .container,
+  .container-fluid {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
 @media (max-width: 991.98px) {
-    .navbar-collapse {
-        padding: 1rem;
-        border-radius: 0 0 12px 12px;
-    }
-    .navbar-nav .nav-link {
-        color: #fff !important;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
+  .navbar-collapse {
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+  }
+  .navbar-nav .nav-link {
+    color: #fff !important;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
 }
 
 /* Media queries para tarjetas de productos */
 @media (max-width: 576px) {
-    .card {
-        min-width: 90vw;
-        margin-left: auto;
-        margin-right: auto;
-    }
+  .card {
+    min-width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 @media (min-width: 577px) {
-    .card {
-        min-width: 300px;
-        max-width: 350px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+  .card {
+    min-width: 300px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .categoria-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--verde-herbamate);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-    text-shadow: 0 2px 8px rgba(21,92,46,0.10);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--verde-herbamate);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 2px 8px rgba(21, 92, 46, 0.1);
 }
 .categoria-title::after {
-    content: "";
-    display: block;
-    margin: 0.5rem auto 0 auto;
-    width: 60%;
-    height: 5px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--verde-herbamate) 60%, var(--verde-suave) 100%);
-    box-shadow: 0 2px 8px rgba(21,92,46,0.10);
-    transition: width 0.3s;
+  content: "";
+  display: block;
+  margin: 0.5rem auto 0 auto;
+  width: 60%;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--verde-herbamate) 60%,
+    var(--verde-suave) 100%
+  );
+  box-shadow: 0 2px 8px rgba(21, 92, 46, 0.1);
+  transition: width 0.3s;
 }
 .categoria-title:hover::after {
-    width: 80%;
+  width: 80%;
+}
+
+/* --- Mejoras visuales para formularios --- */
+.form-group,
+.mb-3 {
+  position: relative;
+  margin-bottom: 1.5rem !important;
+}
+.form-label,
+label[asp-for] {
+  font-weight: 600;
+  color: var(--verde-herbamate);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.02em;
+}
+.form-control,
+.form-select {
+  border-radius: 1.2rem;
+  border: 1.5px solid var(--verde-suave);
+  background: #f8fcf9;
+  font-size: 1.08rem;
+  padding-left: 2.5rem;
+  min-height: 2.7rem;
+  box-shadow: none;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--verde-herbamate);
+  background: #f3fdf6;
+  box-shadow: 0 0 0 0.15rem rgba(21, 92, 46, 0.1);
+}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(38%) sepia(99%) saturate(400%) hue-rotate(90deg)
+    brightness(90%) contrast(90%);
+}
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--verde-herbamate);
+  font-size: 1.2rem;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.form-control::placeholder {
+  color: #b6e2c6;
+  opacity: 1;
+  font-style: italic;
+}
+.form-control:disabled,
+.form-select:disabled {
+  background: #e9ecef;
+  color: #b6e2c6;
+}
+input:invalid,
+select:invalid,
+textarea:invalid {
+  border-color: #dc3545;
+  background: #fff6f6;
+}
+input:valid,
+select:valid,
+textarea:valid {
+  border-color: var(--verde-herbamate);
+}
+.text-danger.small,
+.text-danger {
+  font-size: 0.95rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+/* Labels flotantes para inputs */
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 1rem 0.5rem 2.5rem;
+}
+.form-floating > label {
+  color: var(--verde-herbamate);
+  font-weight: 600;
+  left: 2.5rem;
 }

@@ -4,10 +4,56 @@
     ViewData["Title"] = "Mis Tareas";
 }
 
+<style>
+.table-tareas {
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(33,140,76,0.07);
+    background: #fff;
+}
+.table-tareas thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, #eafaf1 0%, #d2f4e3 100%);
+    color: #218c4c;
+    font-size: 1.08rem;
+    font-weight: 700;
+    border-bottom: 2px solid #b6e2c6;
+}
+.table-tareas tbody tr {
+    transition: background 0.18s, box-shadow 0.18s;
+    height: 62px;
+}
+.table-tareas tbody tr:hover {
+    background: #f3fdf6;
+    box-shadow: 0 2px 8px rgba(33,140,76,0.10);
+}
+.table-tareas td, .table-tareas th {
+    vertical-align: middle !important;
+    border-top: none;
+    border-bottom: 1.5px solid #eafaf1;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+.table-tareas .badge {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 1.2rem;
+    box-shadow: 0 1px 4px rgba(33,140,76,0.07);
+}
+.table-tareas .btn-group .btn {
+    min-width: 90px;
+}
+.table-tareas .btn-group .btn i {
+    font-size: 1.1em;
+}
+</style>
+
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Mis Tareas</h2>
-        <a asp-action="Create" class="btn btn-primary">Nueva Tarea</a>
+        <h2 class="fw-bold text-success"><i class="fas fa-tasks me-2"></i>Mis Tareas</h2>
+        <a asp-action="Create" class="btn btn-success btn-custom"><i class="fas fa-plus me-1"></i> Nueva Tarea</a>
     </div>
     
     <!-- Búsqueda -->
@@ -15,8 +61,8 @@
         <div class="col-md-6">
             <form asp-action="Index" method="get" class="d-flex gap-2">
                 <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" 
-                       class="form-control" placeholder="Buscar tareas..." />
-                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                       class="form-control shadow-sm" placeholder="Buscar tareas..." />
+                <button type="submit" class="btn btn-outline-success"><i class="fas fa-search"></i> Buscar</button>
                 <a asp-action="Index" class="btn btn-outline-secondary">Limpiar</a>
             </form>
         </div>
@@ -24,15 +70,16 @@
 
     <!-- Tabla de tareas -->
     <div class="table-responsive">
-        <table class="table table-striped">
-            <thead class="table-dark">
+        <table class="table table-hover align-middle shadow-sm rounded table-tareas">
+            <thead class="table-success">
                 <tr>
-                    <th>Título</th>
-                    <th>Descripción</th>
-                    <th>Fecha Vencimiento</th>
-                    <th>Prioridad</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+                    <th><i class="fas fa-heading"></i> Título</th>
+                    <th><i class="fas fa-align-left"></i> Descripción</th>
+                    <th><i class="fas fa-calendar-alt"></i> Fecha Vencimiento</th>
+                    <th><i class="fas fa-flag"></i> Prioridad</th>
+                    <th><i class="fas fa-check-circle"></i> Estado</th>
+                    <th><i class="fas fa-qrcode"></i> QR</th>
+                    <th><i class="fas fa-cogs"></i> Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +87,11 @@
                 {
                     <tr>
                         <td colspan="6" class="text-center text-muted py-4">
-                            No hay tareas registradas.
+                            <div class="card border-0 shadow-sm p-4 bg-light">
+                                <i class="fas fa-inbox fa-2x text-success mb-2"></i>
+                                <div class="fw-bold">No hay tareas registradas.</div>
+                                <div class="small">¡Crea tu primera tarea!</div>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -53,55 +104,57 @@
                                 <div class="d-flex align-items-center">
                                     <form asp-action="ToggleComplete" method="post" class="me-2">
                                         <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-sm @(item.Completada ? "btn-success" : "btn-outline-success")">
-                                            @(item.Completada ? "✓" : "○")
+                                        <button type="submit" class="btn btn-sm @(item.Completada ? "btn-success" : "btn-outline-success")" title="@(item.Completada ? "Marcar como pendiente" : "Marcar como completada")">
+                                            <i class="@(item.Completada ? "fas fa-check" : "far fa-circle")"></i>
                                         </button>
                                     </form>
-                                    <span class="@(item.Completada ? "text-decoration-line-through" : "")">
+                                    <span class="@(item.Completada ? "text-decoration-line-through text-muted" : "fw-semibold")">
                                         @Html.DisplayFor(modelItem => item.Titulo)
                                     </span>
                                 </div>
                             </td>
                             <td>
-                                <span class="@(item.Completada ? "text-decoration-line-through" : "")">
+                                <span class="@(item.Completada ? "text-decoration-line-through text-muted" : "")">
                                     @Html.DisplayFor(modelItem => item.Descripcion)
                                 </span>
                             </td>
                             <td>
-                                <span class="@(item.Completada ? "text-decoration-line-through" : "")">
+                                <span class="@(item.Completada ? "text-decoration-line-through text-muted" : "")">
                                     @item.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")
                                 </span>
                             </td>
                             <td>
                                 <span class="badge @(item.Prioridad switch {
                                     "Alta" => "bg-danger",
-                                    "Media" => "bg-warning",
+                                    "Media" => "bg-warning text-dark",
                                     "Baja" => "bg-success",
                                     _ => "bg-secondary"
                                 })">
-                                    @Html.DisplayFor(modelItem => item.Prioridad)
+                                    <i class="fas fa-flag me-1"></i>@Html.DisplayFor(modelItem => item.Prioridad)
                                 </span>
                             </td>
                             <td>
                                 @if (item.Completada)
                                 {
-                                    <span class="badge bg-success">Completada</span>
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> Completada</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning">Pendiente</span>
+                                    <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> Pendiente</span>
                                 }
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#qrModal" data-tarea-id="@item.Id" data-tarea-title="@item.Titulo">
+                                    <i class="fas fa-qrcode"></i>
+                                </button>
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
-                                        Ver
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm d-flex align-items-center gap-1" title="Editar tarea">
+                                        <i class="fas fa-edit"></i> <span class="d-none d-md-inline">Editar</span>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
-                                        Editar
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
-                                        Eliminar
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm d-flex align-items-center gap-1" title="Eliminar tarea">
+                                        <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline">Eliminar</span>
                                     </a>
                                 </div>
                             </td>
@@ -120,11 +173,11 @@
                 @if (Model.HasPreviousPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index"
+                        <a class="page-link text-success" asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@(Model.PageIndex - 1)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                            Anterior
+                            <i class="fas fa-chevron-left"></i> Anterior
                         </a>
                     </li>
                 }
@@ -132,7 +185,7 @@
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                        <a class="page-link" asp-action="Index"
+                        <a class="page-link @(i == Model.PageIndex ? "bg-success border-success text-white" : "text-success")" asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@i"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]">
@@ -144,11 +197,11 @@
                 @if (Model.HasNextPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index"
+                        <a class="page-link text-success" asp-action="Index"
                            asp-route-sortOrder="@ViewData["CurrentSort"]"
                            asp-route-pageNumber="@(Model.PageIndex + 1)"
                            asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                            Siguiente
+                            Siguiente <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
                 }
@@ -159,4 +212,45 @@
     <div class="text-center text-muted mt-3">
         Mostrando @((Model.PageIndex - 1) * Model.Count + 1) a @(Model.PageIndex * Model.Count) de @Model.TotalCount tareas
     </div>
-</div> 
+</div>
+
+<!-- Modal QR -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="qrModalLabel"><i class="fas fa-qrcode me-2"></i>QR de la Tarea</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="qrImg" src="" alt="QR de la tarea" style="max-width:220px;max-height:220px;display:none;" class="mb-3" />
+        <div id="qrTareaTitle" class="fw-bold"></div>
+        <div class="text-muted small mt-2">Escanea para ver los detalles de la tarea</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script>
+      var qrModal = document.getElementById('qrModal');
+      qrModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var tareaId = button.getAttribute('data-tarea-id');
+        var tareaTitle = button.getAttribute('data-tarea-title');
+        var img = document.getElementById('qrImg');
+        img.src = '/Tareas/QR/' + tareaId;
+        img.style.display = 'block';
+        document.getElementById('qrTareaTitle').textContent = tareaTitle;
+      });
+      qrModal.addEventListener('hidden.bs.modal', function () {
+        var img = document.getElementById('qrImg');
+        img.src = '';
+        img.style.display = 'none';
+        document.getElementById('qrTareaTitle').textContent = '';
+      });
+    </script>
+} 

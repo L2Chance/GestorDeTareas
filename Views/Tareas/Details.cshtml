@@ -4,63 +4,52 @@
     ViewData["Title"] = "Detalles de Tarea";
 }
 
-<div class="container mt-4">
-    <h2>Detalles de Tarea</h2>
-    
-    <div class="card">
-        <div class="card-header">
-            <h5>Información de la Tarea</h5>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white d-flex align-items-center gap-2">
+                    <i class="fas fa-book-open fa-2x"></i>
+                    <div>
+                        <h2 class="mb-0 fw-bold">@Html.DisplayFor(model => model.Titulo)</h2>
+                        <div class="small text-white-50">Tarea creada el @Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <span class="badge px-3 py-2 fs-6 @(Model.Prioridad switch { "Alta" => "bg-danger", "Media" => "bg-warning text-dark", "Baja" => "bg-success", _ => "bg-secondary" })">
+                            <i class="fas fa-flag me-1"></i> Prioridad: @Html.DisplayFor(model => model.Prioridad)
+                        </span>
+                        <span class="badge px-3 py-2 fs-6 @(Model.Completada ? "bg-success" : "bg-warning text-dark") ms-2">
+                            <i class="@(Model.Completada ? "fas fa-check" : "fas fa-hourglass-half")"></i> @(Model.Completada ? "Completada" : "Pendiente")
+                        </span>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-semibold text-success mb-2"><i class="fas fa-align-left me-2"></i>Descripción</h5>
+                        <div class="ps-2">@Html.DisplayFor(model => model.Descripcion)</div>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-semibold text-success mb-2"><i class="fas fa-calendar-alt me-2"></i>Fecha de Vencimiento</h5>
+                        <div class="ps-2">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <h5 class="fw-semibold text-success mb-2"><i class="fas fa-qrcode me-2"></i>QR de la Tarea</h5>
+                        <img src="/Tareas/QR/@Model.Id" alt="QR de la tarea" style="max-width:180px;max-height:180px;" class="shadow-sm rounded bg-white p-2" />
+                        <div class="text-muted small mt-2">Escanea para ver esta tarea en cualquier dispositivo</div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex flex-wrap gap-2 justify-content-end">
+                    <form asp-action="ToggleComplete" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn @(Model.Completada ? "btn-warning" : "btn-success")">
+                            <i class="@(Model.Completada ? "fas fa-undo" : "fas fa-check")"></i> @(Model.Completada ? "Marcar como Pendiente" : "Marcar como Completada")
+                        </button>
+                    </form>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Título</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Titulo)</dd>
-                
-                <dt class="col-sm-3">Descripción</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-                
-                <dt class="col-sm-3">Fecha de Vencimiento</dt>
-                <dd class="col-sm-9">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</dd>
-                
-                <dt class="col-sm-3">Prioridad</dt>
-                <dd class="col-sm-9">
-                    <span class="badge @(Model.Prioridad switch {
-                        "Alta" => "bg-danger",
-                        "Media" => "bg-warning",
-                        "Baja" => "bg-success",
-                        _ => "bg-secondary"
-                    })">
-                        @Html.DisplayFor(model => model.Prioridad)
-                    </span>
-                </dd>
-                
-                <dt class="col-sm-3">Estado</dt>
-                <dd class="col-sm-9">
-                    @if (Model.Completada)
-                    {
-                        <span class="badge bg-success">Completada</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning">Pendiente</span>
-                    }
-                </dd>
-                
-                <dt class="col-sm-3">Fecha de Creación</dt>
-                <dd class="col-sm-9">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
-            </dl>
-        </div>
-    </div>
-    
-    <div class="mt-4">
-        <form asp-action="ToggleComplete" method="post" class="d-inline">
-            <input type="hidden" name="id" value="@Model.Id" />
-            <button type="submit" class="btn @(Model.Completada ? "btn-warning" : "btn-success")">
-                @(Model.Completada ? "Marcar como Pendiente" : "Marcar como Completada")
-            </button>
-        </form>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
-        <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
     </div>
 </div> 

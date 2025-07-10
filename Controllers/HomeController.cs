@@ -14,16 +14,22 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
     {
         _logger = logger;
         _context = context;
         _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     public IActionResult Index()
     {
+        if (User.Identity != null && _signInManager.IsSignedIn(User))
+        {
+            return RedirectToAction("Index", "Tareas");
+        }
         return View();
     }
 

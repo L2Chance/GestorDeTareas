@@ -5,41 +5,48 @@
 }
 
 <div class="container mt-4">
-    <h2>Crear Nueva Tarea</h2>
-    
-    <form asp-action="Create" method="post">
-        <div class="form-group">
-            <label asp-for="Titulo">Título</label>
-            <input asp-for="Titulo" class="form-control" />
-            <span asp-validation-for="Titulo" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-plus me-2"></i>Crear Nueva Tarea</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Titulo" class="form-label fw-semibold">Título</label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Ej: Comprar víveres" />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Detalles de la tarea..."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="FechaVencimiento" class="form-label fw-semibold">Fecha de Vencimiento</label>
+                            <input asp-for="FechaVencimiento" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="FechaVencimiento" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Prioridad" class="form-label fw-semibold">Prioridad</label>
+                            <select asp-for="Prioridad" class="form-select">
+                                <option value="">Seleccione...</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Media">Media</option>
+                                <option value="Baja">Baja</option>
+                            </select>
+                            <span asp-validation-for="Prioridad" class="text-danger small"></span>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-custom flex-grow-1"><i class="fas fa-check me-1"></i>Crear Tarea</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary flex-grow-1"><i class="fas fa-times me-1"></i>Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label asp-for="Descripcion">Descripción</label>
-            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Descripcion" class="text-danger"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="FechaVencimiento">Fecha de Vencimiento</label>
-            <input asp-for="FechaVencimiento" class="form-control" type="datetime-local" />
-            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="Prioridad">Prioridad</label>
-            <select asp-for="Prioridad" class="form-control">
-                <option value="">Seleccione...</option>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
-            <span asp-validation-for="Prioridad" class="text-danger"></span>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Crear Tarea</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 
 @section Scripts {

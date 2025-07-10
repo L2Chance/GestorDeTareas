@@ -7,11 +7,16 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
+        body {
+            background: #f6faf7;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
         .navbar-sticky {
             position: sticky;
             top: 0;
             z-index: 1030;
-            background: #155c2e;
+            background: linear-gradient(90deg, #218c4c 0%, #155c2e 100%);
+            box-shadow: 0 2px 8px rgba(21,92,46,0.08);
         }
         .logo-img {
             height: 48px;
@@ -20,19 +25,24 @@
         .navbar-nav .nav-link {
             color: #fff !important;
             font-weight: 500;
-            transition: color 0.2s;
+            letter-spacing: 0.5px;
+            transition: color 0.2s, background 0.2s;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
         }
-        .navbar-nav .nav-link:hover {
-            color: #b6e2c6 !important;
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: #fff !important;
+            background: #218c4c;
         }
-        .btn-custom {
-            background: #155c2e;
+        .btn-custom, .btn-success {
+            background: #218c4c;
             color: #fff;
             border-radius: 2rem;
+            border: none;
             transition: background 0.2s, box-shadow 0.2s;
         }
-        .btn-custom:hover {
-            background: #218c4c;
+        .btn-custom:hover, .btn-success:hover {
+            background: #155c2e;
             box-shadow: 0 2px 8px rgba(21,92,46,0.15);
         }
         .navbar-toggler {
@@ -52,7 +62,31 @@
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
         }
         .navbar-collapse {
+            background: linear-gradient(90deg, #218c4c 0%, #155c2e 100%);
+        }
+        .footer {
             background: #155c2e;
+            color: #b6e2c6;
+            padding: 1.5rem 0 0.5rem 0;
+            font-size: 1rem;
+            border-top: 3px solid #218c4c;
+            box-shadow: 0 -2px 8px rgba(21,92,46,0.05);
+        }
+        .footer a {
+            color: #b6e2c6;
+            text-decoration: underline;
+        }
+        .footer a:hover {
+            color: #fff;
+        }
+        .logo-gradient-text {
+            background: linear-gradient(90deg, #218c4c 60%, #b6e2c6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -60,22 +94,29 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-sticky shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <span class="fw-bold text-white">TaskManager</span>
+                <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+                    <span class="d-flex align-items-center justify-content-center rounded-circle shadow-sm" style="background:#218c4c;width:42px;height:42px;">
+                        <i class="fas fa-book-open fa-lg text-white"></i>
+                    </span>
+                    <span class="fw-bold fs-3 text-white" style="letter-spacing:1px;text-shadow:0 2px 8px rgba(21,92,46,0.15);font-weight:800;">
+                        TaskManager
+                    </span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                        </li>
+                        @using Microsoft.AspNetCore.Identity
+                        @inject SignInManager<IdentityUser> SignInManager
+                        @if (!SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Tareas" asp-action="Index">Tareas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Mi Cuenta</a>
                         </li>
                         <li class="nav-item">
                             <partial name="_LoginPartial" />

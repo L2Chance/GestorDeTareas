@@ -8457,24 +8457,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Iserre\\.nuget\\packages\\": {}
+    "/home/lautaro/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Iserre\\OneDrive\\Escritorio\\CODEX\\jueves\\MVC\\MVC.csproj",
+      "projectUniqueName": "/home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/MVC.csproj",
       "projectName": "MVC",
-      "projectPath": "C:\\Users\\Iserre\\OneDrive\\Escritorio\\CODEX\\jueves\\MVC\\MVC.csproj",
-      "packagesPath": "C:\\Users\\Iserre\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Iserre\\OneDrive\\Escritorio\\CODEX\\jueves\\MVC\\obj\\",
+      "projectPath": "/home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/MVC.csproj",
+      "packagesPath": "/home/lautaro/.nuget/packages/",
+      "outputPath": "/home/lautaro/Desktop/Proyectos/Backend/gestor-de-tareas/GestorTareas.API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Iserre\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/lautaro/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -8563,7 +8564,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.107/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

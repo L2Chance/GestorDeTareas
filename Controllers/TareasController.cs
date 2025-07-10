@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using MVC.Data;
 using MVC.Models;
 using System.Security.Claims;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace MVC.Controllers
 {
@@ -310,6 +313,25 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Tareas/QR/5
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> QR(int id)
+        {
+            var tarea = await _context.Tareas.FindAsync(id);
+            if (tarea == null)
+            {
+                return NotFound();
+            }
+            // URL a la que debe apuntar el QR
+            var url = Url.Action("Details", "Tareas", new { id = tarea.Id }, protocol: Request.Scheme);
+            var qrGenerator = new QRCodeGenerator();
+            var qrData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+            var pngQr = new PngByteQRCode(qrData);
+            var qrBytes = pngQr.GetGraphic(20);
+            return File(qrBytes, "image/png");
         }
 
         private bool TareaExists(int id)

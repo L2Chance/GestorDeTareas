@@ -2,14 +2,14 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
+<ul class="nav nav-pills flex-column gap-2">
+    <li class="nav-item"><a class="nav-link d-flex align-items-center gap-2 @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index"><i class="fas fa-user"></i> Perfil</a></li>
+    <li class="nav-item"><a class="nav-link d-flex align-items-center gap-2 @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email"><i class="fas fa-envelope"></i> Email</a></li>
+    <li class="nav-item"><a class="nav-link d-flex align-items-center gap-2 @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword"><i class="fas fa-key"></i> Contraseña</a></li>
     @if (hasExternalLogins)
     {
-        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link d-flex align-items-center gap-2 @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins"><i class="fas fa-link"></i> Logins externos</a></li>
     }
-    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
+    <li class="nav-item"><a class="nav-link d-flex align-items-center gap-2 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication"><i class="fas fa-shield-alt"></i> Doble factor</a></li>
+    <li class="nav-item"><a class="nav-link d-flex align-items-center gap-2 @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData"><i class="fas fa-user-lock"></i> Datos personales</a></li>
 </ul>

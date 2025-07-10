@@ -4,55 +4,58 @@
     ViewData["Title"] = "Editar Tarea";
 }
 
-<div class="container mt-4">
-    <h2>Editar Tarea</h2>
-    
-    <form asp-action="Edit" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
-        
-        <div class="form-group">
-            <label asp-for="Titulo">Título</label>
-            <input asp-for="Titulo" class="form-control" />
-            <span asp-validation-for="Titulo" class="text-danger"></span>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark d-flex align-items-center gap-2">
+                    <i class="fas fa-edit fa-2x"></i>
+                    <h2 class="mb-0 fw-bold">Editar Tarea</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mb-3">
+                            <label asp-for="Titulo" class="form-label fw-semibold">Título</label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Ej: Comprar víveres" />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label fw-semibold">Descripción</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Detalles de la tarea..."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="FechaVencimiento" class="form-label fw-semibold">Fecha de Vencimiento</label>
+                            <input asp-for="FechaVencimiento" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="FechaVencimiento" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Prioridad" class="form-label fw-semibold">Prioridad</label>
+                            <select asp-for="Prioridad" class="form-select">
+                                <option value="">Seleccione...</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Media">Media</option>
+                                <option value="Baja">Baja</option>
+                            </select>
+                            <span asp-validation-for="Prioridad" class="text-danger small"></span>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input asp-for="Completada" class="form-check-input" type="checkbox" id="completadaCheck" />
+                            <label asp-for="Completada" class="form-check-label" for="completadaCheck">
+                                Tarea Completada
+                            </label>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning flex-grow-1"><i class="fas fa-save me-1"></i>Guardar Cambios</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary flex-grow-1"><i class="fas fa-times me-1"></i>Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label asp-for="Descripcion">Descripción</label>
-            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Descripcion" class="text-danger"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="FechaVencimiento">Fecha de Vencimiento</label>
-            <input asp-for="FechaVencimiento" class="form-control" type="datetime-local" />
-            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
-        </div>
-        
-        <div class="form-group">
-            <label asp-for="Prioridad">Prioridad</label>
-            <select asp-for="Prioridad" class="form-control">
-                <option value="">Seleccione...</option>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
-            <span asp-validation-for="Prioridad" class="text-danger"></span>
-        </div>
-        
-        <div class="form-check mt-3">
-            <input asp-for="Completada" class="form-check-input" type="checkbox" />
-            <label asp-for="Completada" class="form-check-label">
-                Tarea Completada
-            </label>
-        </div>
-        
-        <div class="mt-4">
-            <button type="submit" class="btn btn-warning">Guardar Cambios</button>
-            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">Ver Detalles</a>
-            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
 
 @section Scripts {
