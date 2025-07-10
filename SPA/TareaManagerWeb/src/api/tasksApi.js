@@ -33,7 +33,11 @@ export const fetchTaskById = async (id) => {
   return handleResponse(response);
 };
 
-// Crear nueva tarea
+/**
+ * Crear nueva tarea
+ * @param {object} task - Datos de la tarea (frontend)
+ * @param {object} usuario - Usuario autenticado (debe tener id)
+ */
 export const createTask = async (task, usuario) => {
   const completada = convertStatusToApi(task.status);
   const body = {
@@ -42,7 +46,7 @@ export const createTask = async (task, usuario) => {
     completada,
     fechaLimite: task.dueDate ? new Date(task.dueDate).toISOString() : null,
     prioridad: convertPriorityToApi(task.priority),
-    usuarioId: usuario.id,
+    usuarioId: usuario.id, // Siempre el usuario autenticado
     usuario: usuario,
   };
   console.log("Body enviado al crear tarea:", body);

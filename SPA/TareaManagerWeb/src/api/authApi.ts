@@ -131,7 +131,7 @@ export const validateToken = async (): Promise<boolean> => {
   try {
     await getCurrentUser();
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -178,6 +178,44 @@ export const changePassword = async (data: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
+    }
+  );
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+  }
+  return await response.json();
+};
+
+// Solicitar recuperación de contraseña
+export const forgotPassword = async (email: string) => {
+  const response = await fetch(
+    "https://gestordetareas-hodt.onrender.com/api/Auth/forgot-password",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }
+  );
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+  }
+  return await response.json();
+};
+
+// Restablecer contraseña con token
+export const resetPassword = async (data: {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => {
+  const response = await fetch(
+    "https://gestordetareas-hodt.onrender.com/api/Auth/reset-password",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }
   );
