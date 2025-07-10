@@ -1,0 +1,66 @@
+@model MVC.Models.Tarea
+
+@{
+    ViewData["Title"] = "Detalles de Tarea";
+}
+
+<div class="container mt-4">
+    <h2>Detalles de Tarea</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Información de la Tarea</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Título</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Titulo)</dd>
+                
+                <dt class="col-sm-3">Descripción</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+                
+                <dt class="col-sm-3">Fecha de Vencimiento</dt>
+                <dd class="col-sm-9">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</dd>
+                
+                <dt class="col-sm-3">Prioridad</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Prioridad switch {
+                        "Alta" => "bg-danger",
+                        "Media" => "bg-warning",
+                        "Baja" => "bg-success",
+                        _ => "bg-secondary"
+                    })">
+                        @Html.DisplayFor(model => model.Prioridad)
+                    </span>
+                </dd>
+                
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Completada)
+                    {
+                        <span class="badge bg-success">Completada</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Pendiente</span>
+                    }
+                </dd>
+                
+                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dd class="col-sm-9">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+            </dl>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <form asp-action="ToggleComplete" method="post" class="d-inline">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn @(Model.Completada ? "btn-warning" : "btn-success")">
+                @(Model.Completada ? "Marcar como Pendiente" : "Marcar como Completada")
+            </button>
+        </form>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+    </div>
+</div> 

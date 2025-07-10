@@ -1,0 +1,60 @@
+@model MVC.Models.Tarea
+
+@{
+    ViewData["Title"] = "Editar Tarea";
+}
+
+<div class="container mt-4">
+    <h2>Editar Tarea</h2>
+    
+    <form asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="form-group">
+            <label asp-for="Titulo">Título</label>
+            <input asp-for="Titulo" class="form-control" />
+            <span asp-validation-for="Titulo" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Descripcion">Descripción</label>
+            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Descripcion" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="FechaVencimiento">Fecha de Vencimiento</label>
+            <input asp-for="FechaVencimiento" class="form-control" type="datetime-local" />
+            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Prioridad">Prioridad</label>
+            <select asp-for="Prioridad" class="form-control">
+                <option value="">Seleccione...</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+            <span asp-validation-for="Prioridad" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mt-3">
+            <input asp-for="Completada" class="form-check-input" type="checkbox" />
+            <label asp-for="Completada" class="form-check-label">
+                Tarea Completada
+            </label>
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">Ver Detalles</a>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

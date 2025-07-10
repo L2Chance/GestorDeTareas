@@ -1,0 +1,130 @@
+/* Colores base */
+:root {
+    --verde-herbamate: #155c2e;
+    --verde-hover: #218c4c;
+    --verde-suave: #b6e2c6;
+    --blanco: #fff;
+    --gris-texto: #222;
+}
+
+body {
+    background: var(--blanco);
+    color: var(--gris-texto);
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.btn, .btn-custom {
+    border-radius: 2rem !important;
+    font-weight: 500;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+
+.btn-primary, .btn-custom {
+    background: var(--verde-herbamate) !important;
+    color: var(--blanco) !important;
+    border: none;
+}
+
+.btn-primary:hover, .btn-custom:hover {
+    background: var(--verde-hover) !important;
+    color: var(--blanco) !important;
+    box-shadow: 0 2px 8px rgba(21,92,46,0.15);
+}
+
+/* Formularios con validaciones visuales */
+input:invalid, select:invalid, textarea:invalid {
+    border-color: #dc3545;
+    animation: shake 0.2s 1;
+}
+input:valid, select:valid, textarea:valid {
+    border-color: var(--verde-herbamate);
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+.form-control:focus {
+    border-color: var(--verde-herbamate);
+    box-shadow: 0 0 0 0.2rem rgba(21,92,46,0.15);
+    transition: box-shadow 0.2s;
+}
+
+/* Animaciones en tarjetas y botones */
+.card, .btn, .form-control {
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover {
+    box-shadow: 0 4px 24px rgba(21,92,46,0.10);
+    transform: translateY(-2px) scale(1.01);
+}
+
+/* Navbar y menú */
+.navbar-sticky {
+    box-shadow: 0 2px 8px rgba(21,92,46,0.08);
+}
+
+/* Responsive ajustes */
+@media (max-width: 576px) {
+    .logo-img { height: 36px; }
+    .navbar-brand span { font-size: 1.1rem; }
+    .container, .container-fluid { padding-left: 8px; padding-right: 8px; }
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        padding: 1rem;
+        border-radius: 0 0 12px 12px;
+    }
+    .navbar-nav .nav-link {
+        color: #fff !important;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Media queries para tarjetas de productos */
+@media (max-width: 576px) {
+    .card {
+        min-width: 90vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+@media (min-width: 577px) {
+    .card {
+        min-width: 300px;
+        max-width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.categoria-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--verde-herbamate);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 2px 8px rgba(21,92,46,0.10);
+}
+.categoria-title::after {
+    content: "";
+    display: block;
+    margin: 0.5rem auto 0 auto;
+    width: 60%;
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--verde-herbamate) 60%, var(--verde-suave) 100%);
+    box-shadow: 0 2px 8px rgba(21,92,46,0.10);
+    transition: width 0.3s;
+}
+.categoria-title:hover::after {
+    width: 80%;
+}

@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "TaskManager - Gestor de Tareas";
+}
+
+<div class="container-fluid">
+    <div class="row min-vh-100 align-items-center">
+        <div class="col-lg-6">
+            <div class="text-center text-lg-start">
+                <h1 class="display-4 fw-bold text-primary mb-4">
+                    <i class="fas fa-tasks me-3"></i>TaskManager
+                </h1>
+                <h2 class="h3 text-secondary mb-4">Tu Gestor de Tareas Personal</h2>
+                <p class="lead mb-4">
+                    Organiza tu vida de manera eficiente con nuestro gestor de tareas intuitivo. 
+                    Crea, gestiona y completa tus tareas con facilidad.
+                </p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-plus-circle text-success fa-2x mb-3"></i>
+                                <h5 class="card-title">Crear Tareas</h5>
+                                <p class="card-text">Agrega nuevas tareas con prioridades y fechas de vencimiento.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-check-circle text-primary fa-2x mb-3"></i>
+                                <h5 class="card-title">Gestionar Estado</h5>
+                                <p class="card-text">Marca tareas como completadas y realiza seguimiento de tu progreso.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-search text-info fa-2x mb-3"></i>
+                                <h5 class="card-title">Buscar y Filtrar</h5>
+                                <p class="card-text">Encuentra rápidamente las tareas que necesitas con búsquedas avanzadas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shield-alt text-warning fa-2x mb-3"></i>
+                                <h5 class="card-title">Seguro y Privado</h5>
+                                <p class="card-text">Tus tareas están protegidas con autenticación segura.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h3 class="text-primary">¡Comienza Ahora!</h3>
+                        <p class="text-muted">Regístrate o inicia sesión para comenzar a gestionar tus tareas</p>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <a href="/Identity/Account/Register" class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-user-plus me-2"></i>Registrarse
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="/Identity/Account/Login" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <h6 class="text-muted mb-3">Características Principales</h6>
+                        <div class="row g-2 text-muted">
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>CRUD Completo
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>Paginación
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>Filtros Avanzados
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>Selector de Prioridad
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>Autenticación Segura
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-check text-success me-1"></i>Interfaz Responsiva
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>

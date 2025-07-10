@@ -1,0 +1,68 @@
+@model MVC.Models.Tarea
+
+@{
+    ViewData["Title"] = "Eliminar Tarea";
+}
+
+<div class="container mt-4">
+    <h2>Eliminar Tarea</h2>
+    
+    <div class="alert alert-danger">
+        <h4>¡Atención!</h4>
+        <p>Esta acción no se puede deshacer. Una vez eliminada la tarea, no podrá recuperarla.</p>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Información de la Tarea</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Título</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Titulo)</dd>
+                
+                <dt class="col-sm-3">Descripción</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+                
+                <dt class="col-sm-3">Fecha de Vencimiento</dt>
+                <dd class="col-sm-9">@Model.FechaVencimiento.ToString("dd/MM/yyyy HH:mm")</dd>
+                
+                <dt class="col-sm-3">Prioridad</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Prioridad switch {
+                        "Alta" => "bg-danger",
+                        "Media" => "bg-warning",
+                        "Baja" => "bg-success",
+                        _ => "bg-secondary"
+                    })">
+                        @Html.DisplayFor(model => model.Prioridad)
+                    </span>
+                </dd>
+                
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Completada)
+                    {
+                        <span class="badge bg-success">Completada</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Pendiente</span>
+                    }
+                </dd>
+                
+                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dd class="col-sm-9">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+            </dl>
+        </div>
+    </div>
+    
+    <form asp-action="Delete" method="post" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        
+        <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">Ver Detalles</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div> 
