@@ -95,6 +95,8 @@ namespace GestorTareas.API.DTOs
         public int Estado { get; set; } = 1; // 1: Pendiente, 2: En Progreso, 3: Completada, 4: Cancelada
         
         public string? FechaLimite { get; set; } // Formato: "2025-07-10" o "2025-07-10T23:59:59"
+        
+        public int? UsuarioId { get; set; } // Opcional: para asignar un usuario específico
     }
     
     public class ActualizarTareaDTO
