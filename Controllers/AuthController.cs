@@ -183,5 +183,27 @@ namespace GestorTareas.API.Controllers
                 return StatusCode(500, new { message = "Error al obtener usuario autenticado", error = ex.Message });
             }
         }
+        
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            try
+            {
+                // Obtener el ID del usuario desde el token JWT
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+                }
+                
+                await _authService.LogoutAsync(userId);
+                return Ok(new { message = "Sesión cerrada correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al cerrar sesión", error = ex.Message });
+            }
+        }
     }
 } 

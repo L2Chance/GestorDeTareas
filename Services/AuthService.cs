@@ -22,6 +22,7 @@ namespace GestorTareas.API.Services
         Task<UsuarioResponseDTO> EditarPerfilAsync(int userId, EditarPerfilDTO editarDTO);
         Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDTO cambiarPasswordDTO);
         Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId);
+        Task<bool> LogoutAsync(int userId);
     }
     
     public class AuthService : IAuthService
@@ -334,6 +335,21 @@ namespace GestorTareas.API.Services
                 FechaCreacion = usuario.FechaCreacion,
                 EmailConfirmado = usuario.EmailConfirmado
             };
+        }
+
+        public async Task<bool> LogoutAsync(int userId)
+        {
+            var usuario = await _context.Usuarios.FindAsync(userId);
+            if (usuario == null)
+            {
+                return false;
+            }
+            
+            // Actualizar el último acceso para registrar el logout
+            usuario.UltimoAcceso = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            
+            return true;
         }
     }
 } 
