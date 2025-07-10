@@ -138,15 +138,25 @@ namespace GestorTareas.API.Controllers
             return Ok(tareaResponse);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<TareaResponseDTO>> CrearTarea([FromBody] CrearTareaDTO crearTareaDTO)
         {
             // Parsear la fecha límite
             var fechaLimite = ParseFechaSinHora(crearTareaDTO.FechaLimite);
 
-            // Buscar el primer usuario disponible o usar ID 1 por defecto
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync();
-            var usuarioId = usuario?.Id ?? 1;
+            // Obtener el ID del usuario autenticado desde el token JWT
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int usuarioId))
+            {
+                return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+            }
+
+            var usuario = await _context.Usuarios.FindAsync(usuarioId);
+            if (usuario == null)
+            {
+                return Unauthorized(new { message = "Usuario no encontrado en la base de datos" });
+            }
 
             var tarea = new Tarea
             {
@@ -174,7 +184,7 @@ namespace GestorTareas.API.Controllers
                 FechaLimite = tarea.FechaLimite,
                 Prioridad = tarea.Prioridad,
                 UsuarioId = tarea.UsuarioId,
-                UsuarioNombre = usuario != null ? $"{usuario.Nombre} {usuario.Apellido}" : "Usuario"
+                UsuarioNombre = $"{usuario.Nombre} {usuario.Apellido}"
             };
 
             return CreatedAtAction(nameof(GetTarea), new { id = tarea.Id }, tareaResponse);
