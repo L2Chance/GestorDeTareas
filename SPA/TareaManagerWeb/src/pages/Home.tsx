@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  ClipboardDocumentListIcon,
+  UserIcon,
+  CalendarDaysIcon,
+  FlagIcon,
+  XMarkIcon,
+  QrCodeIcon,
+} from "@heroicons/react/24/outline";
 import TaskTable from "../components/TaskTable";
 import TaskModal from "../components/TaskModal";
 import {
@@ -7,8 +15,10 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  convertApiTaskToFrontendTask,
+  updateTaskStatus,
+  statusToInt,
 } from "../api/tasksApi.js";
-import { convertApiTaskToFrontendTask } from "../api/tasksApi.js";
 import { useApi } from "../hooks/useApi";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { Task, TaskStatus, TaskPriority } from "../types/task";
@@ -108,19 +118,9 @@ function Home() {
   const handleStatusChange = async (id: string, newStatus: TaskStatus) => {
     setCrudLoading(true);
     try {
-      const taskToUpdate = apiTasks?.find((t) => t.id.toString() === id);
-      if (taskToUpdate) {
-        const frontendTask: Task = convertApiTaskToFrontendTask(taskToUpdate);
-        await updateTask(
-          taskToUpdate.id.toString(),
-          {
-            ...frontendTask,
-            status: newStatus,
-          },
-          user
-        );
-        refetchTasks();
-      }
+      const statusInt = statusToInt(newStatus);
+      await updateTaskStatus(id, statusInt);
+      refetchTasks();
     } catch (error) {
       console.error("Error al cambiar estado:", error);
       alert("Error al cambiar el estado. Inténtalo de nuevo.");
@@ -198,102 +198,128 @@ function Home() {
     }, [task.id]);
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-        <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all">
+        <div className="relative w-full max-w-lg rounded-3xl bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950 shadow-2xl p-8 border border-gray-200 dark:border-gray-700 animate-fadeIn">
           <button
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+            className="absolute top-4 right-4 text-gray-400 hover:text-red-500 bg-white/70 dark:bg-gray-800/70 rounded-full p-2 shadow focus:outline-none focus:ring-2 focus:ring-red-400"
             onClick={onClose}
             aria-label="Cerrar"
           >
-            ×
+            <XMarkIcon className="w-6 h-6" />
           </button>
-          <h2 className="text-2xl font-bold mb-2 text-blue-700 flex items-center gap-2">
-            {task.title}
-          </h2>
-          <p className="text-gray-700 mb-4 text-base whitespace-pre-line border-l-4 border-blue-200 pl-3 bg-blue-50 rounded">
-            {task.description}
-          </p>
-          <div className="flex flex-col gap-2 mb-4">
-            <div>
-              <span className="font-semibold text-gray-600">Responsables:</span>{" "}
-              {task.responsables.map((r) => r.name).join(", ")}
-            </div>
-            <div>
-              <span className="font-semibold text-gray-600">Estado:</span>{" "}
-              <span
-                className={`inline-block px-2 py-1 rounded text-xs font-semibold 
-                ${
-                  task.status === "Listo"
-                    ? "bg-green-100 text-green-700"
-                    : task.status === "En curso"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : task.status === "En revisión"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-              >
-                {task.status}
+          <div className="flex items-center gap-3 mb-4">
+            <ClipboardDocumentListIcon className="w-8 h-8 text-blue-500 dark:text-blue-300" />
+            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent dark:from-blue-400 dark:via-indigo-300 dark:to-purple-400">
+              {task.title}
+            </h2>
+          </div>
+          <div className="mb-6 p-4 rounded-xl bg-blue-50 dark:bg-gray-800 border-l-4 border-blue-400 dark:border-blue-500 text-gray-700 dark:text-gray-200 shadow-sm">
+            <p className="whitespace-pre-line text-base">{task.description}</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <UserIcon className="w-5 h-5 text-blue-400 dark:text-blue-300" />
+              <span className="font-semibold text-gray-600 dark:text-gray-300">
+                Responsables:
+              </span>
+              <span className="text-gray-800 dark:text-gray-100">
+                {task.responsables.map((r) => r.name).join(", ")}
               </span>
             </div>
-            <div>
-              <span className="font-semibold text-gray-600">Fecha límite:</span>{" "}
-              {task.dueDate}
-            </div>
-            <div>
-              <span className="font-semibold text-gray-600">Prioridad:</span>{" "}
+            <div className="flex items-center gap-2">
+              <FlagIcon className="w-5 h-5 text-pink-400 dark:text-pink-300" />
+              <span className="font-semibold text-gray-600 dark:text-gray-300">
+                Prioridad:
+              </span>
               <span
-                className={`inline-block px-2 py-1 rounded text-xs font-semibold 
+                className={`inline-block px-2 py-1 rounded-lg text-xs font-bold shadow-sm transition-colors
                 ${
                   task.priority === "Alta"
-                    ? "bg-red-100 text-red-700"
+                    ? "bg-gradient-to-r from-red-400 to-red-600 text-white"
                     : task.priority === "Media"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+                    ? "bg-gradient-to-r from-yellow-300 to-yellow-500 text-yellow-900"
+                    : "bg-gradient-to-r from-gray-200 to-gray-400 text-gray-800 dark:from-gray-700 dark:to-gray-500 dark:text-gray-100"
+                }
+              `}
               >
                 {task.priority}
               </span>
             </div>
+            <div className="flex items-center gap-2">
+              <CalendarDaysIcon className="w-5 h-5 text-green-400 dark:text-green-300" />
+              <span className="font-semibold text-gray-600 dark:text-gray-300">
+                Fecha límite:
+              </span>
+              <span className="text-gray-800 dark:text-gray-100">
+                {task.dueDate}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-600 dark:text-gray-300">
+                Estado:
+              </span>
+              <span
+                className={`inline-block px-2 py-1 rounded-lg text-xs font-bold shadow-sm
+                ${
+                  task.status === "Listo"
+                    ? "bg-green-500 text-white"
+                    : task.status === "En curso"
+                    ? "bg-yellow-400 text-yellow-900"
+                    : task.status === "En revisión"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-400 text-white"
+                }
+              `}
+              >
+                {task.status}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-2 mt-4">
-            <span className="font-semibold text-gray-600 mb-1">
+          <div className="flex flex-col items-center gap-2 mt-2">
+            <span className="font-semibold text-gray-600 dark:text-gray-300 flex items-center gap-1 mb-1">
+              <QrCodeIcon className="w-5 h-5 text-blue-400 dark:text-blue-300" />{" "}
               Código QR de la tarea:
             </span>
-            {qrLoading ? (
-              <div className="flex items-center justify-center h-24 w-24">
-                <svg
-                  className="animate-spin h-8 w-8 text-blue-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  ></path>
-                </svg>
-              </div>
-            ) : qrError ? (
-              <div className="text-red-500 text-sm">{qrError}</div>
-            ) : qrUrl ? (
-              <img
-                src={qrUrl}
-                alt="QR de la tarea"
-                className="h-32 w-32 object-contain border rounded bg-gray-50"
-              />
-            ) : null}
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 flex flex-col items-center">
+              {qrLoading ? (
+                <div className="flex items-center justify-center h-24 w-24">
+                  <svg
+                    className="animate-spin h-8 w-8 text-blue-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                  </svg>
+                </div>
+              ) : qrError ? (
+                <div className="text-red-500 text-sm">{qrError}</div>
+              ) : qrUrl ? (
+                <img
+                  src={qrUrl}
+                  alt="QR de la tarea"
+                  className="h-32 w-32 object-contain border rounded bg-gray-50 dark:bg-gray-800 shadow"
+                />
+              ) : null}
+            </div>
           </div>
-          <button className="btn-primary mt-6 w-full" onClick={onClose}>
-            Cerrar
+          <button
+            className="mt-8 w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-700 dark:to-indigo-800 text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-300 text-lg flex items-center justify-center gap-2"
+            onClick={onClose}
+          >
+            <XMarkIcon className="w-5 h-5" /> Cerrar
           </button>
         </div>
       </div>
@@ -349,8 +375,10 @@ function Home() {
       {/* Header Section */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <div className="flex gap-4 text-gray-600 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">
+            Dashboard
+          </h1>
+          <div className="flex gap-4 text-gray-600 text-sm dark:text-gray-100">
             <span>
               Total: <span className="font-semibold">{stats.total}</span>
             </span>
@@ -374,9 +402,9 @@ function Home() {
         <button
           onClick={() => setModalOpen(true)}
           disabled={crudLoading}
-          className="btn-primary flex items-center gap-2 self-start md:self-auto disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-700 dark:to-indigo-800 text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-300 self-start md:self-auto disabled:opacity-50 text-base"
         >
-          <PlusIcon className="w-5 h-5" />
+          <PlusIcon className="w-6 h-6" />
           {crudLoading ? "Guardando..." : "Añadir tarea"}
         </button>
       </div>

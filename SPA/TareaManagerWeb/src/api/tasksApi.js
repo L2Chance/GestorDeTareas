@@ -97,7 +97,7 @@ export const convertApiTaskToFrontendTask = (apiTask) => ({
   id: apiTask.id.toString(),
   title: apiTask.titulo,
   description: apiTask.descripcion,
-  status: convertStatusFromApi(apiTask.completada),
+  status: intToStatus(apiTask.estado),
   priority: convertPriorityFromApi(apiTask.prioridad),
   dueDate: apiTask.fechaLimite
     ? new Date(apiTask.fechaLimite).toISOString().split("T")[0]
@@ -135,4 +135,50 @@ export const getTasksByPeriod = async (period) => {
   }
 
   return frontendTasks;
+};
+
+// Mapeo de estados entre texto y entero
+export const statusToInt = (status) => {
+  switch (status) {
+    case "Pendiente":
+      return 0;
+    case "En curso":
+      return 1;
+    case "En revisión":
+      return 2;
+    case "Listo":
+      return 3;
+    default:
+      return 0;
+  }
+};
+
+export const intToStatus = (value) => {
+  switch (value) {
+    case 0:
+      return "Pendiente";
+    case 1:
+      return "En curso";
+    case 2:
+      return "En revisión";
+    case 3:
+      return "Listo";
+    default:
+      return "Pendiente";
+  }
+};
+
+// Actualizar solo el estado de una tarea
+export const updateTaskStatus = async (taskId, statusInt) => {
+  const response = await fetch(
+    `https://gestordetareas-hodt.onrender.com/api/Tareas/${taskId}/estado`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(statusInt),
+    }
+  );
+  return handleResponse(response);
 };
