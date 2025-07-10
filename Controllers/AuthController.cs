@@ -98,6 +98,7 @@ namespace GestorTareas.API.Controllers
         }
         
         [HttpGet("usuario-autenticado")]
+        [AllowAnonymous]
         public async Task<ActionResult<UsuarioResponseDTO>> ObtenerUsuarioAutenticado()
         {
             try
@@ -106,7 +107,8 @@ namespace GestorTareas.API.Controllers
                 var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
                 if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
                 {
-                    return Unauthorized(new { message = "Token inválido o usuario no autenticado" });
+                    // Si es usuario anónimo, devolver null
+                    return Ok(null);
                 }
                 
                 var usuario = await _authService.ObtenerUsuarioPorIdAsync(userId);
