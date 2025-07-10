@@ -40,6 +40,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "TuClaveSecretaSuperSegura123!"))
         };
+        
+        // Agregar eventos para logging
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"JWT Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("JWT Token validated successfully");
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine($"JWT Challenge: {context.Error}, {context.ErrorDescription}");
+                return Task.CompletedTask;
+            }
+        };
     });
 
 // Register AuthService
@@ -58,7 +78,9 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins("http://localhost:3000", "http://localhost:5173", "https://your-frontend-domain.com") // Agregar tu dominio de frontend
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithExposedHeaders("Authorization"));
 });
 
 var app = builder.Build();

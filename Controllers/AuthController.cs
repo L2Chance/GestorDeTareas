@@ -205,5 +205,71 @@ namespace GestorTareas.API.Controllers
                 return StatusCode(500, new { message = "Error al cerrar sesión", error = ex.Message });
             }
         }
+        
+        [Authorize]
+        [HttpGet("test-auth")]
+        public ActionResult TestAuth()
+        {
+            try
+            {
+                // Obtener información del token
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                var emailClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Email);
+                var nameClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Name);
+                
+                return Ok(new 
+                { 
+                    message = "Autenticación exitosa",
+                    userId = userIdClaim?.Value,
+                    email = emailClaim?.Value,
+                    name = nameClaim?.Value,
+                    claims = User.Claims.Select(c => new { type = c.Type, value = c.Value }).ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error en test de autenticación", error = ex.Message });
+            }
+        }
+        
+        [HttpGet("verify-token")]
+        public ActionResult VerifyToken()
+        {
+            try
+            {
+                // Obtener el token del header Authorization
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                
+                if (string.IsNullOrEmpty(authHeader))
+                {
+                    return BadRequest(new { message = "No se encontró el header Authorization" });
+                }
+                
+                if (!authHeader.StartsWith("Bearer "))
+                {
+                    return BadRequest(new { message = "El header Authorization debe comenzar con 'Bearer '" });
+                }
+                
+                var token = authHeader.Substring("Bearer ".Length);
+                
+                // Verificar que el token no esté vacío
+                if (string.IsNullOrEmpty(token))
+                {
+                    return BadRequest(new { message = "El token está vacío" });
+                }
+                
+                return Ok(new 
+                { 
+                    message = "Token recibido correctamente",
+                    tokenLength = token.Length,
+                    tokenStartsWith = token.Substring(0, Math.Min(20, token.Length)) + "...",
+                    hasBearer = authHeader.StartsWith("Bearer ")
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al verificar token", error = ex.Message });
+            }
+        }
     }
 } 
