@@ -25,9 +25,8 @@ namespace GestorTareas.API.Services
         
         public string GenerarURLParaTarea(Tarea tarea, string baseUrl)
         {
-            // Crear una URL que contenga información de la tarea
-            // En una aplicación real, esto podría ser una URL que abra la tarea en el frontend
-            return $"{baseUrl}/tareas/{tarea.Id}?titulo={Uri.EscapeDataString(tarea.Titulo)}&estado={tarea.Estado}";
+            // Corregido: ahora la URL apunta al endpoint de la API de tareas
+            return $"{baseUrl}/api/tareas/{tarea.Id}";
         }
     }
 } 

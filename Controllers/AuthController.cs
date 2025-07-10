@@ -158,7 +158,6 @@ namespace GestorTareas.API.Controllers
             }
         }
         
-        [Authorize]
         [HttpGet("usuario-autenticado")]
         public async Task<ActionResult<UsuarioResponseDTO>> ObtenerUsuarioAutenticado()
         {
