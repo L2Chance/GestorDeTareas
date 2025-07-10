@@ -13,20 +13,6 @@ function TaskRow({ task }: TaskRowProps) {
       <td className="py-2">{task.title}</td>
 
       <td>
-        <div className="flex">
-          {task.responsables.map((resp, i: number) => (
-            <img
-              key={i}
-              src={resp.avatar}
-              alt={resp.name}
-              title={resp.name}
-              className="w-8 h-8 rounded-full border-2 border-white -ml-2"
-            />
-          ))}
-        </div>
-      </td>
-
-      <td>
         <TaskStatusBadge status={task.status} />
       </td>
 

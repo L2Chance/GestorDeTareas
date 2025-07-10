@@ -32,7 +32,7 @@ export const createTask = async (task, usuario) => {
     titulo: task.title,
     descripcion: task.description,
     completada,
-    fechaCompletada: completada ? (task.dueDate ? new Date(task.dueDate).toISOString() : null) : null,
+    fechaLimite: task.dueDate ? new Date(task.dueDate).toISOString() : null,
     prioridad: convertPriorityToApi(task.priority),
     usuarioId: usuario.id,
     usuario: usuario,
@@ -55,7 +55,7 @@ export const updateTask = async (taskId, task, usuario) => {
     titulo: task.title,
     descripcion: task.description,
     completada,
-    fechaCompletada: completada ? (task.dueDate ? new Date(task.dueDate).toISOString() : null) : null,
+    fechaLimite: task.dueDate ? new Date(task.dueDate).toISOString() : null,
     prioridad: convertPriorityToApi(task.priority),
     usuarioId: usuario.id,
     usuario: usuario,
@@ -91,7 +91,7 @@ export const convertApiTaskToFrontendTask = (apiTask) => ({
   description: apiTask.descripcion,
   status: convertStatusFromApi(apiTask.completada),
   priority: convertPriorityFromApi(apiTask.prioridad),
-  dueDate: apiTask.fechaCompletada ? new Date(apiTask.fechaCompletada).toISOString().split('T')[0] : "",
+  dueDate: apiTask.fechaLimite ? new Date(apiTask.fechaLimite).toISOString().split('T')[0] : "",
   responsables: apiTask.usuario ? [
     { 
       name: `${apiTask.usuario.nombre} ${apiTask.usuario.apellido}`, 

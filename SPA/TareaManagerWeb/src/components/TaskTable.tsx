@@ -107,7 +107,6 @@ function TaskTable({ title, period, tasks: propTasks, onDelete, onEdit, onRowCli
         <thead>
           <tr>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tarea</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Responsables</th>
             <th
               className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer select-none"
               onClick={() => {
@@ -162,20 +161,6 @@ function TaskTable({ title, period, tasks: propTasks, onDelete, onEdit, onRowCli
                 <td className="px-4 py-3 align-top">
                   <div className="font-medium text-gray-900">{task.title}</div>
                   <div className="text-xs text-gray-500 mt-1 max-w-xs truncate" title={task.description}>{task.description}</div>
-                </td>
-                {/* Responsables con avatar */}
-                <td className="px-4 py-3 align-top">
-                  <div className="flex -space-x-2">
-                    {task.responsables.map((resp, i) => (
-                      <img
-                        key={i}
-                        src={resp.avatar}
-                        alt={resp.name}
-                        title={resp.name}
-                        className="w-8 h-8 rounded-full border-2 border-white bg-gray-200"
-                      />
-                    ))}
-                  </div>
                 </td>
                 {/* Estado: select integrado en el badge */}
                 <td className="px-4 py-3 align-top">
