@@ -128,6 +128,9 @@ namespace GestorTareas.API.DTOs
         [Range(1, 3)]
         public int Prioridad { get; set; } = 1; // 1: Baja, 2: Media, 3: Alta
         
+        [Range(1, 4)]
+        public int Estado { get; set; } = 1; // 1: Pendiente, 2: En Progreso, 3: Completada, 4: Cancelada
+        
         public string? FechaLimite { get; set; } // Formato: "2025-07-10" o "2025-07-10T23:59:59"
     }
     
@@ -140,7 +143,8 @@ namespace GestorTareas.API.DTOs
         [MaxLength(1000)]
         public string Descripcion { get; set; } = string.Empty;
         
-        public bool Completada { get; set; }
+        [Range(1, 4)]
+        public int Estado { get; set; } = 1; // 1: Pendiente, 2: En Progreso, 3: Completada, 4: Cancelada
         
         [Range(1, 3)]
         public int Prioridad { get; set; } = 1;
@@ -153,7 +157,8 @@ namespace GestorTareas.API.DTOs
         public int Id { get; set; }
         public string Titulo { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
-        public bool Completada { get; set; }
+        public int Estado { get; set; } // 1: Pendiente, 2: En Progreso, 3: Completada, 4: Cancelada
+        public string EstadoNombre { get; set; } = string.Empty; // Nombre del estado
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaCompletada { get; set; }
         public DateTime? FechaLimite { get; set; }

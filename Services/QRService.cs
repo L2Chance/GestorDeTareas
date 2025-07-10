@@ -27,7 +27,7 @@ namespace GestorTareas.API.Services
         {
             // Crear una URL que contenga información de la tarea
             // En una aplicación real, esto podría ser una URL que abra la tarea en el frontend
-            return $"{baseUrl}/tareas/{tarea.Id}?titulo={Uri.EscapeDataString(tarea.Titulo)}&completada={tarea.Completada}";
+            return $"{baseUrl}/tareas/{tarea.Id}?titulo={Uri.EscapeDataString(tarea.Titulo)}&estado={tarea.Estado}";
         }
     }
 } 

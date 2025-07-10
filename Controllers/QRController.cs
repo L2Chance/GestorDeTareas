@@ -88,7 +88,8 @@ namespace GestorTareas.API.Controllers
                 id = tarea.Id,
                 titulo = tarea.Titulo,
                 descripcion = tarea.Descripcion,
-                completada = tarea.Completada,
+                estado = tarea.Estado,
+                estadoNombre = GetEstadoNombre(tarea.Estado),
                 prioridad = tarea.Prioridad,
                 fechaCreacion = tarea.FechaCreacion,
                 fechaCompletada = tarea.FechaCompletada,
@@ -99,6 +100,19 @@ namespace GestorTareas.API.Controllers
                     apellido = tarea.Usuario.Apellido
                 } : null
             });
+        }
+        
+        // Método helper para obtener el nombre del estado
+        private string GetEstadoNombre(int estado)
+        {
+            return estado switch
+            {
+                1 => "Pendiente",
+                2 => "En Progreso", 
+                3 => "Completada",
+                4 => "Cancelada",
+                _ => "Desconocido"
+            };
         }
     }
 } 

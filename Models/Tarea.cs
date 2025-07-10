@@ -14,7 +14,8 @@ namespace GestorTareas.API.Models
         [MaxLength(1000)]
         public string Descripcion { get; set; } = string.Empty;
         
-        public bool Completada { get; set; }
+        [Range(1, 4)]
+        public int Estado { get; set; } = 1; // 1: Pendiente, 2: En Progreso, 3: Completada, 4: Cancelada
         
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         
