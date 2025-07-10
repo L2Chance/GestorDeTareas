@@ -1,8 +1,13 @@
-import { buildApiUrl, handleApiError } from '../config/api';
-import { convertPriorityFromApi, convertPriorityToApi, convertStatusFromApi, convertStatusToApi } from '../types/task';
+import { buildApiUrl, handleApiError } from "../config/api";
+import {
+  convertPriorityFromApi,
+  convertPriorityToApi,
+  convertStatusFromApi,
+  convertStatusToApi,
+} from "../types/task";
 
 // URL base de tu API .NET deployada en Render
-const API_URL = buildApiUrl('/api/tareas');
+const API_URL = buildApiUrl("/api/tareas");
 
 // Función para manejar errores de red
 const handleResponse = async (response) => {
@@ -10,7 +15,10 @@ const handleResponse = async (response) => {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `Error HTTP: ${response.status}`);
   }
-  return response.json();
+  if (response.status === 204) return null;
+  const text = await response.text();
+  if (!text) return null;
+  return JSON.parse(text);
 };
 
 // Obtener todas las tareas
@@ -37,7 +45,7 @@ export const createTask = async (task, usuario) => {
     usuarioId: usuario.id,
     usuario: usuario,
   };
-  console.log('Body enviado al crear tarea:', body);
+  console.log("Body enviado al crear tarea:", body);
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -91,13 +99,18 @@ export const convertApiTaskToFrontendTask = (apiTask) => ({
   description: apiTask.descripcion,
   status: convertStatusFromApi(apiTask.completada),
   priority: convertPriorityFromApi(apiTask.prioridad),
-  dueDate: apiTask.fechaLimite ? new Date(apiTask.fechaLimite).toISOString().split('T')[0] : "",
-  responsables: apiTask.usuario ? [
-    { 
-      name: `${apiTask.usuario.nombre} ${apiTask.usuario.apellido}`, 
-      avatar: `https://ui-avatars.com/api/?name=${apiTask.usuario.nombre}+${apiTask.usuario.apellido}&background=random` 
-    }
-  ] : [{ name: "Usuario", avatar: "https://via.placeholder.com/32" }]
+  dueDate: apiTask.fechaLimite
+    ? new Date(apiTask.fechaLimite).toISOString().split("T")[0]
+    : "",
+  responsables: apiTask.usuario
+    ? [
+        {
+          name: `${apiTask.usuario.nombre} ${apiTask.usuario.apellido}`,
+          avatar: `https://ui-avatars.com/api/?name=${apiTask.usuario.nombre}+${apiTask.usuario.apellido}&background=random`,
+        },
+      ]
+    : [{ name: "Usuario", avatar: "https://via.placeholder.com/32" }],
+  usuarioId: apiTask.usuarioId,
 });
 
 // Función para obtener tareas por período (mantener compatibilidad)
@@ -111,10 +124,13 @@ export const getTasksByPeriod = async (period) => {
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
 
-    return frontendTasks.filter(task => {
+    return frontendTasks.filter((task) => {
       if (!task.dueDate) return true;
       const taskDate = new Date(task.dueDate);
-      return taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
+      return (
+        taskDate.getMonth() === currentMonth &&
+        taskDate.getFullYear() === currentYear
+      );
     });
   }
 

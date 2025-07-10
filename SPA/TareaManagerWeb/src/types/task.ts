@@ -44,6 +44,7 @@ export interface Task {
   status: "Pendiente" | "Listo" | "En curso" | "En revisión";
   dueDate: string; // fecha límite en formato ISO
   priority: TaskPriority;
+  usuarioId: number;
 }
 
 export type TaskStatus = "Pendiente" | "Listo" | "En curso" | "En revisión";
@@ -51,19 +52,27 @@ export type TaskStatus = "Pendiente" | "Listo" | "En curso" | "En revisión";
 // Funciones de conversión
 export const convertPriorityFromApi = (prioridad: number): TaskPriority => {
   switch (prioridad) {
-    case 1: return "Baja";
-    case 2: return "Media";
-    case 3: return "Alta";
-    default: return "Media";
+    case 1:
+      return "Baja";
+    case 2:
+      return "Media";
+    case 3:
+      return "Alta";
+    default:
+      return "Media";
   }
 };
 
 export const convertPriorityToApi = (priority: TaskPriority): number => {
   switch (priority) {
-    case "Baja": return 1;
-    case "Media": return 2;
-    case "Alta": return 3;
-    default: return 2;
+    case "Baja":
+      return 1;
+    case "Media":
+      return 2;
+    case "Alta":
+      return 3;
+    default:
+      return 2;
   }
 };
 

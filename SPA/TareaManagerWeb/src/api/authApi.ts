@@ -21,23 +21,26 @@ export const login = async (
   credentials: LoginCredentials
 ): Promise<AuthResponse> => {
   try {
-    const response = await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password
-      }),
-    });
+    const response = await fetch(
+      "https://gestordetareas-hodt.onrender.com/api/Auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `Error HTTP: ${response.status}`);
     }
     // Suponiendo que el backend devuelve el usuario y el token
     const data = await response.json();
-    console.log('Respuesta del backend al login:', data);
+    console.log("Respuesta del backend al login:", data);
     return data;
   } catch (error) {
     console.error("Error en login:", error);
@@ -50,19 +53,22 @@ export const register = async (
   credentials: RegisterCredentials
 ): Promise<AuthResponse> => {
   try {
-    const response = await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/registro", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: credentials.email,
-        nombre: credentials.name,
-        apellido: credentials.name,
-        password: credentials.password,
-        confirmarPassword: credentials.confirmPassword
-      }),
-    });
+    const response = await fetch(
+      "https://gestordetareas-hodt.onrender.com/api/Auth/registro",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          nombre: credentials.name,
+          apellido: credentials.name,
+          password: credentials.password,
+          confirmarPassword: credentials.confirmPassword,
+        }),
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `Error HTTP: ${response.status}`);
@@ -84,9 +90,9 @@ export const logout = async (): Promise<void> => {
     await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/logout", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
@@ -102,13 +108,16 @@ export const getCurrentUser = async (): Promise<User> => {
   if (!token) {
     throw new Error("No hay token de autenticación");
   }
-  const response = await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/usuario-autenticado", {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
+  const response = await fetch(
+    "https://gestordetareas-hodt.onrender.com/api/Auth/usuario-autenticado",
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }
-  });
+  );
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `Error HTTP: ${response.status}`);
@@ -128,17 +137,24 @@ export const validateToken = async (): Promise<boolean> => {
 };
 
 // Actualizar perfil
-export const updateProfile = async (profile: { nombre: string; apellido: string; email: string }) => {
+export const updateProfile = async (profile: {
+  nombre: string;
+  apellido: string;
+  email: string;
+}) => {
   const token = localStorage.getItem("authToken");
   if (!token) throw new Error("No hay token de autenticación");
-  const response = await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/usuario", {
-    method: "PUT",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(profile)
-  });
+  const response = await fetch(
+    "https://gestordetareas-hodt.onrender.com/api/Auth/usuario",
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profile),
+    }
+  );
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `Error HTTP: ${response.status}`);
@@ -147,17 +163,24 @@ export const updateProfile = async (profile: { nombre: string; apellido: string;
 };
 
 // Cambiar contraseña
-export const changePassword = async (data: { passwordActual: string; nuevaPassword: string; confirmarNuevaPassword: string }) => {
+export const changePassword = async (data: {
+  passwordActual: string;
+  nuevaPassword: string;
+  confirmarNuevaPassword: string;
+}) => {
   const token = localStorage.getItem("authToken");
   if (!token) throw new Error("No hay token de autenticación");
-  const response = await fetch("https://gestordetareas-hodt.onrender.com/api/Auth/cambiar-password", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  });
+  const response = await fetch(
+    "https://gestordetareas-hodt.onrender.com/api/Auth/cambiar-password",
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || `Error HTTP: ${response.status}`);

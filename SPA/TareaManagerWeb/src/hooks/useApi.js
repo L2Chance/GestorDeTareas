@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 // Hook personalizado para manejar llamadas a API
 export const useApi = (apiFunction, dependencies = []) => {
@@ -6,20 +6,23 @@ export const useApi = (apiFunction, dependencies = []) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const execute = useCallback(async (...args) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await apiFunction(...args);
-      setData(result);
-      return result;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction]);
+  const execute = useCallback(
+    async (...args) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiFunction(...args);
+        setData(result);
+        return result;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiFunction]
+  );
 
   useEffect(() => {
     if (dependencies.length === 0) {
@@ -40,17 +43,17 @@ export const useCrudApi = (baseUrl) => {
       setLoading(true);
       setError(null);
       const response = await fetch(baseUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(item),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Error al crear el elemento');
+        throw new Error("Error al crear el elemento");
       }
-      
+
       return await response.json();
     } catch (err) {
       setError(err.message);
@@ -65,17 +68,17 @@ export const useCrudApi = (baseUrl) => {
       setLoading(true);
       setError(null);
       const response = await fetch(`${baseUrl}/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(item),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Error al actualizar el elemento');
+        throw new Error("Error al actualizar el elemento");
       }
-      
+
       return await response.json();
     } catch (err) {
       setError(err.message);
@@ -90,11 +93,11 @@ export const useCrudApi = (baseUrl) => {
       setLoading(true);
       setError(null);
       const response = await fetch(`${baseUrl}/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Error al eliminar el elemento');
+        throw new Error("Error al eliminar el elemento");
       }
     } catch (err) {
       setError(err.message);
@@ -105,4 +108,4 @@ export const useCrudApi = (baseUrl) => {
   };
 
   return { create, update, remove, loading, error };
-}; 
+};
