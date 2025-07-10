@@ -3,7 +3,7 @@ export interface User {
   username: string;
   email: string;
   name: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   createdAt: string;
   nombre?: string;
   apellido?: string;
@@ -34,4 +34,4 @@ export interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
-} 
+}

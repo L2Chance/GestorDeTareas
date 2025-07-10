@@ -4,7 +4,6 @@ import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import LoadingSpinner from "./components/LoadingSpinner";
-import Perfil from "./pages/Perfil";
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -58,22 +57,31 @@ const AppContent = () => {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="flex items-center justify-between px-4 py-3">
           {user ? (
-            <Link to="/" className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-150 cursor-pointer">
+            <Link
+              to="/"
+              className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-150 cursor-pointer"
+            >
               Gestor de Tareas
             </Link>
           ) : (
-            <h1 className="text-xl font-semibold text-gray-900">Gestor de Tareas</h1>
+            <h1 className="text-xl font-semibold text-gray-900">
+              Gestor de Tareas
+            </h1>
           )}
           <div className="flex items-center gap-4">
             {user && (
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/perfil"
-                  className="text-sm font-semibold text-gray-700 px-4 py-1 rounded border border-gray-200 hover:bg-gray-100 transition-colors duration-150 cursor-pointer shadow-sm"
-                  style={{ textDecoration: 'none' }}
-                >
+              <div className="relative group">
+                <button className="text-sm font-semibold text-gray-700 px-4 py-1 rounded border border-gray-200 hover:bg-gray-100 transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none">
                   {user.nombre}
-                </Link>
+                </button>
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 z-50 invisible group-hover:visible group-focus-within:visible">
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b"
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -83,37 +91,29 @@ const AppContent = () => {
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <ProtectedRoute>
                 <Home />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/perfil" 
-            element={
-              <ProtectedRoute>
-                <Perfil />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               <PublicRoute>
                 <Login />
               </PublicRoute>
-            } 
+            }
           />
-          <Route 
-            path="/register" 
+          <Route
+            path="/register"
             element={
               <PublicRoute>
                 <Register />
               </PublicRoute>
-            } 
+            }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

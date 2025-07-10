@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import LoadingSpinner from '../components/LoadingSpinner';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Login: React.FC = () => {
   const { login, loading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,17 +39,20 @@ const Login: React.FC = () => {
             Accede a tu cuenta de Gestor de Tareas
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
               <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -64,16 +67,19 @@ const Login: React.FC = () => {
                 disabled={loading}
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Contraseña
               </label>
               <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
                   onChange={handleChange}
@@ -109,15 +115,18 @@ const Login: React.FC = () => {
                   <span className="ml-2">Iniciando sesión...</span>
                 </div>
               ) : (
-                'Iniciar Sesión'
+                "Iniciar Sesión"
               )}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              ¿No tienes cuenta?{' '}
-              <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+              ¿No tienes cuenta?{" "}
+              <a
+                href="/register"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Regístrate aquí
               </a>
             </p>
@@ -128,4 +137,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;
