@@ -225,6 +225,39 @@ namespace GestorTareas.API.Controllers
             return Ok(tareaResponse);
         }
 
+        [HttpPut("{id}/estado")]
+        public async Task<ActionResult<TareaResponseDTO>> ActualizarEstadoTarea(int id, [FromBody] int nuevoEstado)
+        {
+            var tarea = await _context.Tareas.Include(t => t.Usuario).FirstOrDefaultAsync(t => t.Id == id);
+            if (tarea == null)
+                return NotFound();
+
+            tarea.Estado = nuevoEstado;
+            if (nuevoEstado == 3 && !tarea.FechaCompletada.HasValue) // Completada
+                tarea.FechaCompletada = DateTime.Now;
+            else if (nuevoEstado != 3)
+                tarea.FechaCompletada = null;
+
+            await _context.SaveChangesAsync();
+
+            var tareaResponse = new TareaResponseDTO
+            {
+                Id = tarea.Id,
+                Titulo = tarea.Titulo,
+                Descripcion = tarea.Descripcion,
+                Estado = tarea.Estado,
+                EstadoNombre = GetEstadoNombre(tarea.Estado),
+                FechaCreacion = tarea.FechaCreacion,
+                FechaCompletada = tarea.FechaCompletada,
+                FechaLimite = tarea.FechaLimite,
+                Prioridad = tarea.Prioridad,
+                UsuarioId = tarea.UsuarioId,
+                UsuarioNombre = tarea.Usuario != null ? $"{tarea.Usuario.Nombre} {tarea.Usuario.Apellido}" : "Usuario"
+            };
+
+            return Ok(tareaResponse);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> EliminarTarea(int id)
         {

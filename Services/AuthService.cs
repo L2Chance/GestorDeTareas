@@ -15,12 +15,10 @@ namespace GestorTareas.API.Services
         Task<AuthResponseDTO> RegistrarAsync(RegistroDTO registroDTO);
         Task<AuthResponseDTO> LoginAsync(LoginDTO loginDTO);
         Task<bool> RecuperarPasswordAsync(string email);
-        Task<bool> ResetPasswordAsync(ResetPasswordDTO resetDTO);
         Task<bool> ConfirmarEmailAsync(string token);
         Task<bool> EnviarEmailConfirmacionAsync(string email);
         Task<IEnumerable<UsuarioResponseDTO>> ObtenerTodosLosUsuariosAsync();
         Task<UsuarioResponseDTO> EditarPerfilAsync(int userId, EditarPerfilDTO editarDTO);
-        Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDTO cambiarPasswordDTO);
         Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId);
         Task<bool> LogoutAsync(int userId);
     }
@@ -134,29 +132,6 @@ namespace GestorTareas.API.Services
             
             // TODO: Enviar email con el token
             // Por ahora, solo retornamos true
-            return true;
-        }
-        
-        public async Task<bool> ResetPasswordAsync(ResetPasswordDTO resetDTO)
-        {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => 
-                u.TokenRecuperacionPassword == resetDTO.Token && 
-                u.TokenRecuperacionPasswordExpiracion > DateTime.UtcNow);
-            
-            if (usuario == null)
-            {
-                return false;
-            }
-            
-            // Crear nuevo hash y salt
-            var (passwordHash, passwordSalt) = CrearPasswordHash(resetDTO.NuevaPassword);
-            
-            usuario.PasswordHash = passwordHash;
-            usuario.PasswordSalt = passwordSalt;
-            usuario.TokenRecuperacionPassword = null;
-            usuario.TokenRecuperacionPasswordExpiracion = null;
-            
-            await _context.SaveChangesAsync();
             return true;
         }
         
@@ -292,30 +267,6 @@ namespace GestorTareas.API.Services
                 FechaCreacion = usuario.FechaCreacion,
                 EmailConfirmado = usuario.EmailConfirmado
             };
-        }
-
-        public async Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDTO cambiarPasswordDTO)
-        {
-            var usuario = await _context.Usuarios.FindAsync(userId);
-            if (usuario == null)
-            {
-                throw new InvalidOperationException("Usuario no encontrado");
-            }
-            
-            // Verificar la contraseña actual
-            if (!VerificarPassword(cambiarPasswordDTO.PasswordActual, usuario.PasswordHash, usuario.PasswordSalt))
-            {
-                throw new InvalidOperationException("La contraseña actual es incorrecta");
-            }
-            
-            // Crear nuevo hash y salt para la nueva contraseña
-            var (passwordHash, passwordSalt) = CrearPasswordHash(cambiarPasswordDTO.NuevaPassword);
-            
-            usuario.PasswordHash = passwordHash;
-            usuario.PasswordSalt = passwordSalt;
-            
-            await _context.SaveChangesAsync();
-            return true;
         }
 
         public async Task<UsuarioResponseDTO> ObtenerUsuarioPorIdAsync(int userId)

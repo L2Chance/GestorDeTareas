@@ -38,28 +38,6 @@ namespace GestorTareas.API.DTOs
         public string Password { get; set; } = string.Empty;
     }
     
-    public class RecuperarPasswordDTO
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-    }
-    
-    public class ResetPasswordDTO
-    {
-        [Required]
-        public string Token { get; set; } = string.Empty;
-        
-        [Required]
-        [MinLength(6)]
-        [MaxLength(100)]
-        public string NuevaPassword { get; set; } = string.Empty;
-        
-        [Required]
-        [Compare("NuevaPassword")]
-        public string ConfirmarNuevaPassword { get; set; } = string.Empty;
-    }
-    
     public class ConfirmarEmailDTO
     {
         [Required]
@@ -98,21 +76,6 @@ namespace GestorTareas.API.DTOs
         [MinLength(2)]
         [MaxLength(100)]
         public string Apellido { get; set; } = string.Empty;
-    }
-    
-    public class CambiarPasswordDTO
-    {
-        [Required]
-        public string PasswordActual { get; set; } = string.Empty;
-        
-        [Required]
-        [MinLength(6)]
-        [MaxLength(100)]
-        public string NuevaPassword { get; set; } = string.Empty;
-        
-        [Required]
-        [Compare("NuevaPassword")]
-        public string ConfirmarNuevaPassword { get; set; } = string.Empty;
     }
     
     // DTOs para Tareas
