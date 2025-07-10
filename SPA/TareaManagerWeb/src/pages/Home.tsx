@@ -173,30 +173,132 @@ function Home() {
   }: {
     task: Task;
     onClose: () => void;
-  }) => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-2">{task.title}</h2>
-        <p className="text-gray-700 mb-2">{task.description}</p>
-        <div className="mb-2">
-          <span className="font-semibold">Responsables:</span>{" "}
-          {task.responsables.map((r) => r.name).join(", ")}
+  }) => {
+    const [qrUrl, setQrUrl] = useState<string | null>(null);
+    const [qrLoading, setQrLoading] = useState(true);
+    const [qrError, setQrError] = useState("");
+
+    useEffect(() => {
+      setQrLoading(true);
+      setQrError("");
+      setQrUrl(null);
+      fetch(`https://gestordetareas-hodt.onrender.com/api/Tareas/${task.id}/qr`)
+        .then(async (res) => {
+          if (!res.ok) throw new Error("No se pudo obtener el QR");
+          const blob = await res.blob();
+          setQrUrl(URL.createObjectURL(blob));
+        })
+        .catch(() => setQrError("No se pudo cargar el QR"))
+        .finally(() => setQrLoading(false));
+      // Cleanup para liberar el objeto URL
+      return () => {
+        if (qrUrl) URL.revokeObjectURL(qrUrl);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [task.id]);
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+        <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
+          <button
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+            onClick={onClose}
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+          <h2 className="text-2xl font-bold mb-2 text-blue-700 flex items-center gap-2">
+            {task.title}
+          </h2>
+          <p className="text-gray-700 mb-4 text-base whitespace-pre-line border-l-4 border-blue-200 pl-3 bg-blue-50 rounded">
+            {task.description}
+          </p>
+          <div className="flex flex-col gap-2 mb-4">
+            <div>
+              <span className="font-semibold text-gray-600">Responsables:</span>{" "}
+              {task.responsables.map((r) => r.name).join(", ")}
+            </div>
+            <div>
+              <span className="font-semibold text-gray-600">Estado:</span>{" "}
+              <span
+                className={`inline-block px-2 py-1 rounded text-xs font-semibold 
+                ${
+                  task.status === "Listo"
+                    ? "bg-green-100 text-green-700"
+                    : task.status === "En curso"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : task.status === "En revisión"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {task.status}
+              </span>
+            </div>
+            <div>
+              <span className="font-semibold text-gray-600">Fecha límite:</span>{" "}
+              {task.dueDate}
+            </div>
+            <div>
+              <span className="font-semibold text-gray-600">Prioridad:</span>{" "}
+              <span
+                className={`inline-block px-2 py-1 rounded text-xs font-semibold 
+                ${
+                  task.priority === "Alta"
+                    ? "bg-red-100 text-red-700"
+                    : task.priority === "Media"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {task.priority}
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <span className="font-semibold text-gray-600 mb-1">
+              Código QR de la tarea:
+            </span>
+            {qrLoading ? (
+              <div className="flex items-center justify-center h-24 w-24">
+                <svg
+                  className="animate-spin h-8 w-8 text-blue-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              </div>
+            ) : qrError ? (
+              <div className="text-red-500 text-sm">{qrError}</div>
+            ) : qrUrl ? (
+              <img
+                src={qrUrl}
+                alt="QR de la tarea"
+                className="h-32 w-32 object-contain border rounded bg-gray-50"
+              />
+            ) : null}
+          </div>
+          <button className="btn-primary mt-6 w-full" onClick={onClose}>
+            Cerrar
+          </button>
         </div>
-        <div className="mb-2">
-          <span className="font-semibold">Estado:</span> {task.status}
-        </div>
-        <div className="mb-2">
-          <span className="font-semibold">Fecha límite:</span> {task.dueDate}
-        </div>
-        <div className="mb-2">
-          <span className="font-semibold">Prioridad:</span> {task.priority}
-        </div>
-        <button className="btn-primary mt-4" onClick={onClose}>
-          Cerrar
-        </button>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Mostrar loading mientras se cargan las tareas
   if (tasksLoading) {
