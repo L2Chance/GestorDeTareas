@@ -90,5 +90,19 @@ namespace GestorTareas.API.Controllers
             
             return Ok(new { message = "Email de confirmación enviado" });
         }
+        
+        [HttpGet("usuarios")]
+        public async Task<ActionResult<IEnumerable<UsuarioResponseDTO>>> GetUsuarios()
+        {
+            try
+            {
+                var usuarios = await _authService.ObtenerTodosLosUsuariosAsync();
+                return Ok(usuarios);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al obtener usuarios", error = ex.Message });
+            }
+        }
     }
 } 

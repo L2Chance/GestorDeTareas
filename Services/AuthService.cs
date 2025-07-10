@@ -18,6 +18,7 @@ namespace GestorTareas.API.Services
         Task<bool> ResetPasswordAsync(ResetPasswordDTO resetDTO);
         Task<bool> ConfirmarEmailAsync(string token);
         Task<bool> EnviarEmailConfirmacionAsync(string email);
+        Task<IEnumerable<UsuarioResponseDTO>> ObtenerTodosLosUsuariosAsync();
     }
     
     public class AuthService : IAuthService
@@ -240,6 +241,21 @@ namespace GestorTareas.API.Services
             );
             
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<IEnumerable<UsuarioResponseDTO>> ObtenerTodosLosUsuariosAsync()
+        {
+            return await _context.Usuarios
+                .Select(u => new UsuarioResponseDTO
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Nombre = u.Nombre,
+                    Apellido = u.Apellido,
+                    FechaCreacion = u.FechaCreacion,
+                    EmailConfirmado = u.EmailConfirmado
+                })
+                .ToListAsync();
         }
     }
 } 
